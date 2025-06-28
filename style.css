@@ -1,19 +1,38 @@
 body {
     font-family: sans-serif;
-    margin: 20px;
+    /* margin: 20px; REMOVED: Handled by html, body below for full control */
     text-align: center;
     background-color: #f8f8f8;
     color: #333;
+
+    /* ADDED: Make body a flex container to manage vertical space */
+    display: flex;
+    flex-direction: column; /* Stack its children (h1, p, viewer, controls) vertically */
+    height: 100%; /* ADDED: Ensure body takes full height */
+    width: 100%; /* ADDED: Ensure body takes full width */
+    margin: 0; /* ADDED: Remove default body margin */
+    padding: 0; /* ADDED: Remove default body padding */
+    overflow: hidden; /* ADDED: Prevent scrollbars on the inner page itself if content overflows */
+}
+
+/* ADDED: Ensure html also takes full height */
+html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     color: #2a2a2a;
+    flex-shrink: 0; /* ADDED: Prevent h1 from shrinking */
 }
 
 p {
     max-width: 600px;
     margin: 10px auto 30px auto;
     line-height: 1.6;
+    flex-shrink: 0; /* ADDED: Prevent p from shrinking */
 }
 
 /* Dimensions Text (Now styled for above viewer) */
@@ -24,15 +43,19 @@ p {
     margin: 10px auto 20px auto; /* Adjust margin for spacing above viewer */
     text-align: center;
     max-width: 600px; /* To prevent it from stretching too wide */
+    flex-shrink: 0; /* ADDED: Prevent dimensions-text from shrinking */
 }
 
 
 /* Styling for the 3D AR Model Viewer Container */
 .product-3d-viewer-container {
     width: 100%;
-    max-width: 800px; /* Optional: Adjust based on desired max width */
-    height: 400px;    /* Fixed height for the viewer */
-    margin: 20px auto; /* Center the viewer and add vertical spacing */
+    /* max-width: 800px; REMOVED: This was limiting the width */
+    /* height: 400px; REMOVED: This was fixing the height */
+    
+    flex-grow: 1; /* ADDED: This makes the viewer container take all available vertical space */
+    margin: 0 auto; /* UPDATED: Remove fixed vertical margin, keep horizontal centering */
+    
     background-color: #ffffff; /* White background within the viewer */
     border: 1px solid #ddd; /* Light border */
     border-radius: 8px; /* Slightly rounded corners */
@@ -43,6 +66,7 @@ p {
 .product-3d-viewer-container model-viewer {
     width: 100%;
     height: 100%;
+    /* These are already good! They make the model-viewer fill its container */
 }
 
 /* Styles for buttons below the viewer */
@@ -54,6 +78,7 @@ p {
     align-items: center; /* Vertically align items */
     gap: 15px; /* Space between elements */
     padding-bottom: 20px; /* Add some padding below buttons */
+    flex-shrink: 0; /* ADDED: Prevent controls from shrinking */
 }
 
 .action-button {
@@ -71,7 +96,7 @@ p {
     background-color: #0056b3;
 }
 
-/* Modal (Pop-up) Styles */
+/* Modal (Pop-up) Styles - These are for your QR modal, not the main pop-up from the client page */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
