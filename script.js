@@ -33,7 +33,7 @@ function generateQRCode() {
             new QRious({
                 element: qrCodeImage,
                 value: pageUrl,
-                size: 150, // <-- **INCREASED SIZE HERE** to match CSS dimensions
+                size: 150, // <-- **QR CODE SIZE**
                 level: 'H'
             });
             qrCodeImage.style.display = 'block';
@@ -120,15 +120,15 @@ const translations = {
         he: 'מידות: רוחב 90 ס"מ x גובה 160 ס"מ x עומק 20 ס"מ',
         en: 'Dimensions: W 90cm x H 160cm x D 20cm'
     },
-    'reset-view-button': { // Target button itself
+    'reset-view-button': {
         he: 'איפוס תצוגה תלת-ממדית',
         en: 'Reset 3D View'
     },
-    'ar-qr-button': { // Target button itself
+    'ar-qr-button': {
         he: 'מציאות רבודה (QR)',
         en: 'AR QR'
     },
-    'share-button': { // Target button itself
+    'share-button': {
         he: 'שיתוף',
         en: 'Share'
     },
@@ -136,17 +136,19 @@ const translations = {
         he: 'סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.',
         en: 'Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.'
     },
-    // Assuming 'footer-main-text' is correctly added to your index.html
+    'ar-placement-guidance': { // NEW TRANSLATION
+        he: 'במצב מציאות רבודה: הזיזו את הטלפון לאט לסריקת הרצפה/משטח, ואז הקישו על המסך למיקום המודל. סובבו עם שתי אצבעות.',
+        en: 'Once in AR: Slowly move your phone to scan the floor/surface, then tap the screen to place the model. Rotate it with two fingers.'
+    },
     'footer-main-text': {
         he: '© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים',
         en: '© 2025 JZS | 3D & AR Product Visualization'
     }
 };
 
-let currentLanguage = localStorage.getItem('language') || 'en'; // Default to English, as HTML is English
+let currentLanguage = localStorage.getItem('language') || 'en';
 
 function setLanguage(lang) {
-    // Translate elements based on their IDs
     Object.keys(translations).forEach(id => {
         const element = document.getElementById(id);
         if (element && translations[id][lang]) {
@@ -154,25 +156,21 @@ function setLanguage(lang) {
         }
     });
 
-    // Update document direction and language attribute
     document.body.dir = (lang === 'he') ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
 
     localStorage.setItem('language', lang);
     currentLanguage = lang;
 
-    // Update language toggle button text
     if (langToggleButton) {
         langToggleButton.textContent = (lang === 'he') ? 'English' : 'עברית';
     }
 
-    // Update page title (ensure 'main-title' translation exists)
     if (translations['main-title'] && translations['main-title'][currentLanguage]) {
         document.title = translations['main-title'][currentLanguage];
     }
 }
 
-// Initial language setup on page load
 document.addEventListener("DOMContentLoaded", () => {
     const savedLang = localStorage.getItem('language');
     if (savedLang) {
@@ -182,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Event listener for language toggle button
 if (langToggleButton) {
     langToggleButton.addEventListener("click", () => {
         const newLang = (currentLanguage === 'he') ? 'en' : 'he';

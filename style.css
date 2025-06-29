@@ -95,7 +95,7 @@ p {
     padding: 8px;
     border: 1px solid #888;
     width: 90%;
-    max-width: 320px; /* Increased max-width to accommodate larger QR */
+    max-width: 320px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative;
@@ -121,9 +121,9 @@ p {
 
 /* QR Code specific styling within modal */
 .qr-code-wrapper {
-    margin: 10px auto; /* Adjusted margins */
-    width: 150px; /* Increased from 70px */
-    height: 150px; /* Increased from 70px */
+    margin: 10px auto;
+    width: 150px;
+    height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,6 +136,19 @@ p {
     height: 100%;
     display: block;
 }
+
+/* AR Instructions Container within modal */
+.ar-instructions-container {
+    margin-top: 10px; /* Space between QR and instructions */
+}
+
+.ar-instructions-container p {
+    font-size: 0.8em; /* Smaller font for guidance text */
+    line-height: 1.2;
+    margin: 5px auto; /* Small margins between instruction lines */
+    color: #555;
+}
+
 
 /* Responsive adjustments for buttons */
 @media (max-width: 576px) {

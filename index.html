@@ -1,68 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JZS 3D AR Viewer</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-  <style>
-    #lang-toggle-button {
-      min-width: 100px;
-      display: inline-block;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JZS 3D AR Viewer</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 </head>
 <body>
 
-  <h1 id="main-title" data-en="Simple 3D AR Model Viewer Template" data-he="תבנית פשוטה לצפייה במודל תלת-ממדי AR">Simple 3D AR Model Viewer Template</h1>
-  <p id="main-desc" data-en="This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function." data-he="דף זה מדגים מודל תלת-ממדי משובץ עם מציאות רבודה (AR). הוא מציג כיצד ייראה ויתפקד חלון הצפייה התלת-ממדי הקופץ.">This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3d view window will look and function.</p>
-  
-  <p id="model-dimensions" class="dimensions-text" data-en="Dimensions: W 90cm x H 160cm x D 20cm" data-he="מידות: רוחב 90 ס&quot;מ x גובה 160 ס&quot;מ x עומק 20 ס&quot;מ">Dimensions: W 90cm x H 160cm x D 20cm</p>
+    <h1 id="main-title" data-en="Simple 3D AR Model Viewer Template" data-he="תבנית פשוטה לצפייה במודל תלת-ממדי AR">Simple 3D AR Model Viewer Template</h1>
+    <p id="main-desc" data-en="This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function." data-he="דף זה מדגים מודל תלת-ממדי משובץ עם מציאות רבודה (AR). הוא מציג כיצד ייראה ויתפקד חלון הצפייה התלת-ממדי הקופץ.">This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3d view window will look and function.</p>
 
-  <div class="product-3d-viewer-container">
-    <model-viewer
-      id="ar-model-viewer"
-      src="models/HiveShelf90cm.glb"
-      poster="poster.webp"
-      alt="3D model of a Hive Shelf 90cm"
-      ar
-      ar-modes="webxr scene-viewer quick-look"
-      ar-scale="fixed"
-      camera-controls
-      shadow-intensity="1"
-      exposure="1"
-      environment-image="neutral"
-      bounds="tight">
-    </model-viewer>
-  </div>
+    <p id="model-dimensions" class="dimensions-text" data-en="Dimensions: W 90cm x H 160cm x D 20cm" data-he="מידות: רוחב 90 ס&quot;מ x גובה 160 ס&quot;מ x עומק 20 ס&quot;מ">Dimensions: W 90cm x H 160cm x D 20cm</p>
 
-  <div class="controls-below-viewer">
-    <button id="reset-view-button" class="action-button" data-en="Reset 3D View" data-he="איפוס תצוגה תלת-ממדית">Reset 3D View</button>
-    <button id="ar-qr-button" class="action-button" data-en="AR QR" data-he="מציאות רבודה (QR)">AR QR</button>
-    <button id="share-button" class="action-button" data-en="Share" data-he="שיתוף">Share</button>
-    <button id="lang-toggle-button" class="action-button">עברית</button>
-  </div>
+    <div class="product-3d-viewer-container">
+        <model-viewer
+            id="ar-model-viewer"
+            src="models/HiveShelf90cm.glb"
+            poster="poster.webp"
+            alt="3D model of a Hive Shelf 90cm"
+            ar
+            ar-modes="webxr scene-viewer quick-look"
+            ar-scale="fixed"  camera-controls
+            shadow-intensity="1"
+            exposure="1"
+            environment-image="neutral"
+            bounds="tight">
+        </model-viewer>
+    </div>
 
-    <div id="qr-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-button" id="close-qr-modal">&times;</span>
-      <div class="qr-code-wrapper">
-        <a id="qr-code-link" href="#" target="_blank" title="Scan to view in AR">
-          <img id="qr-code-image" src="" alt="QR Code">
-        </a>
-      </div>
-      <p id="qr-instructions" data-en="Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality." data-he="סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.">Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.</p>
-    </div>
-  </div>
+    <div class="controls-below-viewer">
+        <button id="reset-view-button" class="action-button" data-en="Reset 3D View" data-he="איפוס תצוגה תלת-ממדית">Reset 3D View</button>
+        <button id="ar-qr-button" class="action-button" data-en="AR QR" data-he="מציאות רבודה (QR)">AR QR</button>
+        <button id="share-button" class="action-button" data-en="Share" data-he="שיתוף">Share</button>
+        <button id="lang-toggle-button" class="action-button">עברית</button>
+    </div>
 
-    <footer style="margin-top: 40px; font-size: 14px; color: #777;">
-    <span id="footer-main-text" data-en="© 2025 JZS | 3D & AR Product Visualization" data-he="© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים">© 2025 JZS | 3D & AR Product Visualization</span> | <a href="mailto:jonzvis@gmail.com">jonzvis@gmail.com</a>
-  </footer>
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-qr-modal">&times;</span>
+            <div class="qr-code-wrapper">
+                <a id="qr-code-link" href="#" target="_blank" title="Scan to view in AR">
+                    <img id="qr-code-image" src="" alt="QR Code">
+                </a>
+            </div>
+            <div class="ar-instructions-container">
+                <p id="qr-instructions" data-en="Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality." data-he="סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.">Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.</p>
+                <p id="ar-placement-guidance" data-en="Once in AR: Slowly move your phone to scan the floor/surface, then tap the screen to place the model. Rotate it with two fingers." data-he="במצב מציאות רבודה: הזיזו את הטלפון לאט לסריקת הרצפה/משטח, ואז הקישו על המסך למיקום המודל. סובבו עם שתי אצבעות.">Once in AR: Slowly move your phone to scan the floor/surface, then tap the screen to place the model. Rotate it with two fingers.</p>
+            </div>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <footer style="margin-top: 40px; font-size: 14px; color: #777;">
+        <span id="footer-main-text" data-en="© 2025 JZS | 3D & AR Product Visualization" data-he="© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים">© 2025 JZS | 3D & AR Product Visualization</span> | <a href="mailto:jonzvis@gmail.com">jonzvis@gmail.com</a>
+    </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
