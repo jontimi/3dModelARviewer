@@ -1,21 +1,18 @@
 body {
-    font-family: sans-serif;
-    /* margin: 20px; REMOVED: Handled by html, body below for full control */
-    text-align: center;
+    font-family: Arial, sans-serif; /* Changed to Arial for common availability */
+    margin: 0;
+    padding: 10px; /* Reduced overall padding for the page */
     background-color: #f8f8f8;
     color: #333;
 
-    /* ADDED: Make body a flex container to manage vertical space */
+    /* Make body a flex container to manage vertical space */
     display: flex;
     flex-direction: column; /* Stack its children (h1, p, viewer, controls) vertically */
-    height: 100%; /* ADDED: Ensure body takes full height */
-    width: 100%; /* ADDED: Ensure body takes full width */
-    margin: 0; /* ADDED: Remove default body margin */
-    padding: 0; /* ADDED: Remove default body padding */
-    overflow: hidden; /* ADDED: Prevent scrollbars on the inner page itself if content overflows */
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+    overflow-x: hidden; /* Prevent horizontal scrollbar on small screens */
 }
 
-/* ADDED: Ensure html also takes full height */
 html {
     height: 100%;
     width: 100%;
@@ -24,37 +21,51 @@ html {
 }
 
 h1 {
-    color: #2a2a2a;
-    flex-shrink: 0; /* ADDED: Prevent h1 from shrinking */
+    font-size: 1.5em; /* Smaller font size for the main title */
+    margin-top: 10px; /* Reduced top margin */
+    margin-bottom: 5px; /* Reduced bottom margin */
+    text-align: center;
+    color: #333;
+    flex-shrink: 0; /* Prevent h1 from shrinking */
 }
 
 p {
-    max-width: 600px;
-    margin: 10px auto 30px auto;
-    line-height: 1.6;
-    flex-shrink: 0; /* ADDED: Prevent p from shrinking */
+    font-size: 0.9em; /* Smaller font size for paragraphs */
+    margin-top: 5px; /* Reduced top margin */
+    margin-bottom: 5px; /* Reduced bottom margin */
+    text-align: center;
+    color: #555;
+    line-height: 1.4;
+    max-width: 600px; /* Keep paragraph width constrained */
+    margin-left: auto; /* Center paragraph */
+    margin-right: auto; /* Center paragraph */
+    flex-shrink: 0; /* Prevent p from shrinking */
 }
 
-/* Dimensions Text (Now styled for above viewer) */
+/* Dimensions Text */
 .dimensions-text {
-    font-size: 1.1em;
+    font-size: 0.8em; /* Even smaller font size for dimensions */
+    margin-top: 0px; /* Further reduce margin above dimensions */
+    margin-bottom: 10px; /* Small margin below dimensions */
     font-weight: bold;
-    color: #555;
-    margin: 10px auto 20px auto; /* Adjust margin for spacing above viewer */
+    color: #666;
     text-align: center;
     max-width: 600px; /* To prevent it from stretching too wide */
-    flex-shrink: 0; /* ADDED: Prevent dimensions-text from shrinking */
+    margin-left: auto; /* Center dimensions text */
+    margin-right: auto; /* Center dimensions text */
+    flex-shrink: 0; /* Prevent dimensions-text from shrinking */
 }
 
 
-/* Styling for the 3D AR Model Viewer Container */
+/* Container for the <model-viewer> element */
 .product-3d-viewer-container {
+    flex-grow: 1; /* This is crucial: makes the container take up all available vertical space */
     width: 100%;
-    /* max-width: 800px; REMOVED: This was limiting the width */
-    /* height: 400px; REMOVED: This was fixing the height */
-    
-    flex-grow: 1; /* ADDED: This makes the viewer container take all available vertical space */
-    margin: 0 auto; /* UPDATED: Remove fixed vertical margin, keep horizontal centering */
+    display: flex; /* Use flexbox to ensure model-viewer fills it */
+    justify-content: center;
+    align-items: center;
+    min-height: 300px; /* Minimum height for the viewer on smaller screens */
+    margin: 0 auto 10px auto; /* Centered, small margin below the viewer */
     
     background-color: #ffffff; /* White background within the viewer */
     border: 1px solid #ddd; /* Light border */
@@ -66,29 +77,29 @@ p {
 .product-3d-viewer-container model-viewer {
     width: 100%;
     height: 100%;
-    /* These are already good! They make the model-viewer fill its container */
+    border: none; /* Remove any default borders */
 }
 
 /* Styles for buttons below the viewer */
 .controls-below-viewer {
-    margin-top: 20px;
+    margin-top: 10px; /* Reduced top margin */
     display: flex; /* Make it a flex container */
     flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-    justify-content: center; /* CENTER BUTTONS HORIZONTALLY */
+    justify-content: center; /* Center buttons horizontally */
     align-items: center; /* Vertically align items */
     gap: 15px; /* Space between elements */
-    padding-bottom: 20px; /* Add some padding below buttons */
-    flex-shrink: 0; /* ADDED: Prevent controls from shrinking */
+    padding-bottom: 10px; /* Reduced padding below buttons */
+    flex-shrink: 0; /* Prevent controls from shrinking */
 }
 
 .action-button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 15px; /* Smaller padding for action buttons */
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 0.9em; /* Smaller font for action buttons */
     transition: background-color 0.3s ease;
 }
 
@@ -116,7 +127,7 @@ p {
     margin: auto; /* Centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 90%; /* Could be more responsive */
+    width: 90%; /* Responsive width */
     max-width: 400px; /* Max width for pop-up */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -126,19 +137,18 @@ p {
 
 .close-button {
     color: #aaa;
-    float: right; /* Position to the right */
     font-size: 28px;
     font-weight: bold;
     position: absolute; /* Absolute position within modal-content */
     top: 10px;
     right: 15px;
+    cursor: pointer; /* Add cursor pointer */
 }
 
 .close-button:hover,
 .close-button:focus {
     color: black;
     text-decoration: none;
-    cursor: pointer;
 }
 
 /* QR Code specific styling within modal */
@@ -157,4 +167,27 @@ p {
     width: 100%; /* Make image fill its container */
     height: 100%;
     display: block; /* Remove extra space below image */
+}
+
+/* Media queries for responsiveness within the 3D viewer page itself */
+@media (max-width: 600px) {
+    body {
+        padding: 5px; /* Even less padding on very small screens */
+    }
+    h1 {
+        font-size: 1.2em; /* Smaller heading on small phones */
+    }
+    p {
+        font-size: 0.8em; /* Smaller paragraph text on small phones */
+    }
+    .dimensions-text {
+        font-size: 0.7em; /* Smallest dimensions text on small phones */
+    }
+    .action-button {
+        font-size: 0.8em; /* Smaller action buttons on small phones */
+        padding: 6px 12px;
+    }
+    .controls-below-viewer {
+        gap: 10px; /* Reduce gap between buttons */
+    }
 }
