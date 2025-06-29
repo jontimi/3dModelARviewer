@@ -2,12 +2,16 @@
 const modelViewer = document.getElementById("ar-model-viewer");
 const resetButton = document.getElementById("reset-view-button");
 const arQrButton = document.getElementById("ar-qr-button"); 
-const shareButton = document.getElementById("share-button"); // NEW: Get the Share button
+const shareButton = document.getElementById("share-button");
 
 const qrModal = document.getElementById("qr-modal");       
 const closeQrModal = document.getElementById("close-qr-modal"); 
 const qrCodeLink = document.getElementById("qr-code-link");
 const qrCodeImage = document.getElementById("qr-code-image");
+
+// --- Language Toggle Button ---
+const langToggleButton = document.getElementById("lang-toggle-button");
+
 
 // --- Feature: Reset 3D View ---
 if (resetButton) {
@@ -24,6 +28,8 @@ function generateQRCode() {
 
     if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
         try {
+            // Clear previous QR code to prevent issues on re-generation
+            qrCodeImage.src = ''; 
             new QRious({
                 element: qrCodeImage, 
                 value: pageUrl,
@@ -31,11 +37,11 @@ function generateQRCode() {
                 level: 'H' 
             });
             qrCodeImage.style.display = 'block'; 
-            qrCodeLink.href = pageUrl; 
+            qrCodeLink.href = pageUrl; // Ensure link points to current page
             console.log("QR Code generated for:", pageUrl);
         } catch (error) {
             console.error("Error generating QR code:", error);
-            qrCodeImage.style.display = 'none'; 
+            qrCodeImage.style.display = 'none';
         }
     } else {
         qrCodeImage.style.display = 'none';
@@ -43,16 +49,14 @@ function generateQRCode() {
     }
 }
 
-// Event listener for the "AR QR" button to show the modal
 if (arQrButton) {
     arQrButton.addEventListener("click", () => {
-        qrModal.style.display = "flex"; 
-        generateQRCode(); 
+        qrModal.style.display = "flex"; // Use flex to center the modal
+        generateQRCode(); // Generate QR code when modal opens
         console.log("QR Modal opened.");
     });
 }
 
-// Event listener for the close button inside the modal
 if (closeQrModal) {
     closeQrModal.addEventListener("click", () => {
         qrModal.style.display = "none";
@@ -70,14 +74,8 @@ if (qrModal) {
     });
 }
 
-// Generate QR code when model loads (it will be hidden until button press)
-// This listener remains for the QR code functionality
-modelViewer.addEventListener("model-load", generateQRCode);
-// Also try to generate on initial DOM content load for robustness
-document.addEventListener("DOMContentLoaded", generateQRCode);
 
-
-// --- NEW FEATURE: Share Button ---
+// --- Feature: Share Button ---
 if (shareButton) {
     shareButton.addEventListener("click", async () => {
         if (navigator.share) { // Check if Web Share API is supported
@@ -94,7 +92,6 @@ if (shareButton) {
         } else {
             console.warn('Web Share API not supported in this browser/context. Providing fallback.');
             // Fallback for desktop or unsupported browsers: copy link to clipboard
-            // (Note: Clipboard API also requires secure context (HTTPS) or localhost)
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 alert("Share feature not supported. The link has been copied to your clipboard!");
@@ -105,5 +102,89 @@ if (shareButton) {
                 console.error('Failed to copy link to clipboard:', err);
             }
         }
+    });
+}
+
+
+// --- Language Management ---
+const translations = {
+    'main-title': {
+        he: 'תבנית פשוטה לצפייה במודל תלת-ממדי AR',
+        en: 'Simple 3D AR Model Viewer Template'
+    },
+    'main-desc': {
+        he: 'דף זה מדגים מודל תלת-ממדי משובץ עם מציאות רבודה (AR). הוא מציג כיצד ייראה ויתפקד חלון הצפייה התלת-ממדי הקופץ.',
+        en: 'This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function.'
+    },
+    'model-dimensions': {
+        he: 'מידות: רוחב 90 ס"מ x גובה 160 ס"מ x עומק 20 ס"מ',
+        en: 'Dimensions: W 90cm x H 160cm x D 20cm'
+    },
+    'reset-view-button': { // Target button itself
+        he: 'איפוס תצוגה תלת-ממדית',
+        en: 'Reset 3D View'
+    },
+    'ar-qr-button': { // Target button itself
+        he: 'מציאות רבודה (QR)',
+        en: 'AR QR'
+    },
+    'share-button': { // Target button itself
+        he: 'שיתוף',
+        en: 'Share'
+    },
+    'qr-instructions': {
+        he: 'סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.',
+        en: 'Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.'
+    },
+    'footer-main-text': { // For the new span around footer text
+        he: '© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים',
+        en: '© 2025 JZS | 3D & AR Product Visualization'
+    }
+};
+
+let currentLanguage = localStorage.getItem('language') || 'en'; // Default to English, as HTML is English
+
+function setLanguage(lang) {
+    // Translate elements based on their IDs
+    Object.keys(translations).forEach(id => {
+        const element = document.getElementById(id);
+        if (element && translations[id][lang]) {
+            element.textContent = translations[id][lang];
+        }
+    });
+
+    // Update document direction and language attribute
+    document.body.dir = (lang === 'he') ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang; 
+
+    localStorage.setItem('language', lang);
+    currentLanguage = lang;
+
+    // Update language toggle button text
+    if (langToggleButton) {
+        langToggleButton.textContent = (lang === 'he') ? 'English' : 'עברית';
+    }
+    
+    // Update page title
+    document.title = translations['main-title'][currentLanguage];
+}
+
+// Initial language setup on page load
+document.addEventListener("DOMContentLoaded", () => {
+    // Apply saved language preference, or use default HTML lang (English)
+    const savedLang = localStorage.getItem('language');
+    if (savedLang) {
+        setLanguage(savedLang);
+    } else {
+        setLanguage(document.documentElement.lang); // Use language from <html> tag
+    }
+});
+
+// Event listener for language toggle button
+if (langToggleButton) {
+    langToggleButton.addEventListener("click", () => {
+        const newLang = (currentLanguage === 'he') ? 'en' : 'he';
+        setLanguage(newLang);
+        console.log("Language switched to:", newLang);
     });
 }
