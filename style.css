@@ -1,60 +1,46 @@
 body {
-    font-family: Arial, sans-serif; /* Changed to Arial for common availability */
-    margin: 0;
-    padding: 10px; /* Reduced overall padding for the page */
+    font-family: sans-serif;
+    /* margin: 20px; REMOVED: Handled by html, body below for full control */
+    text-align: center;
     background-color: #f8f8f8;
     color: #333;
 
-    /* Make body a flex container to manage vertical space */
+    /* ADDED: Make body a flex container to manage vertical space */
     display: flex;
     flex-direction: column; /* Stack its children (h1, p, viewer, controls) vertically */
-    min-height: 100vh; /* Ensure body takes full viewport height for robust scaling */
-    box-sizing: border-box; /* Include padding in element's total width and height */
-    /* Removed 'overflow-x: hidden' from body for now to rule out conflicts */
+    height: 100%; /* ADDED: Ensure body takes full height */
+    width: 100%; /* ADDED: Ensure body takes full width */
+    margin: 0; /* ADDED: Remove default body margin */
+    padding: 0; /* ADDED: Remove default body padding */
+    overflow: hidden; /* ADDED: Prevent scrollbars on the inner page itself if content overflows */
 }
 
+/* ADDED: Ensure html also takes full height */
 html {
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
-    /* Removed 'overflow: hidden' from html for now to rule out conflicts */
 }
 
 h1 {
-    font-size: 1.5em; /* Smaller font size for the main title */
-    margin-top: 10px; /* Reduced top margin */
-    margin-bottom: 5px; /* Reduced bottom margin */
-    text-align: center;
-    color: #333;
-    flex-shrink: 0; /* Prevent h1 from shrinking */
+    color: #2a2a2a;
+    flex-shrink: 0; /* ADDED: Prevent h1 from shrinking */
 }
 
 p {
-    font-size: 0.9em; /* Smaller font size for paragraphs */
-    margin-top: 5px; /* Reduced top margin */
-    margin-bottom: 5px; /* Reduced bottom margin */
-    text-align: center;
-    color: #555;
-    line-height: 1.4;
-    max-width: 600px; /* Keep paragraph width constrained */
-    margin-left: auto; /* Center paragraph */
-    margin-right: auto; /* Center paragraph */
-    flex-shrink: 0; /* Prevent p from shrinking */
+    max-width: 600px;
+    margin: 10px auto 30px auto;
+    line-height: 1.6;
+    flex-shrink: 0; /* ADDED: Prevent p from shrinking */
 }
 
 /* Dimensions Text */
 .dimensions-text {
-    font-size: 0.8em; /* Even smaller font size for dimensions */
-    margin-top: 0px; /* Further reduce margin above dimensions */
-    margin-bottom: 10px; /* Small margin below dimensions */
-    font-weight: bold;
+    font-size: 0.9em; /* Smaller font size for dimensions */
     color: #666;
-    text-align: center;
-    max-width: 600px; /* To prevent it from stretching too wide */
-    margin-left: auto; /* Center dimensions text */
-    margin-right: auto; /* Center dimensions text */
-    flex-shrink: 0; /* Prevent dimensions-text from shrinking */
+    margin-bottom: 20px; /* Space below dimensions text */
+    flex-shrink: 0; /* ADDED: Prevent dimensions-text from shrinking */
 }
 
 
@@ -62,45 +48,43 @@ p {
 .product-3d-viewer-container {
     flex-grow: 1; /* This is crucial: makes the container take up all available vertical space */
     width: 100%;
-    display: flex; /* Use flexbox to ensure model-viewer fills it */
+    /* ADDED: Ensure it's a flex container and centers its content */
+    display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 400px; /* Ensure a good minimum height for the viewer */
-    margin: 0 auto 10px auto; /* Centered, small margin below the viewer */
+    min-height: 400px; /* ADDED: Ensure a good minimum height for the viewer */
+    margin-bottom: 20px; /* Space below the viewer */
     
     background-color: #ffffff; /* White background within the viewer */
     border: 1px solid #ddd; /* Light border */
     border-radius: 8px; /* Slightly rounded corners */
-    /* Removed 'overflow: hidden' from container for now to rule out conflicts */
+    overflow: hidden; /* Hide any overflow, important for model-viewer */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
 }
 
 .product-3d-viewer-container model-viewer {
-    width: 100%;
-    height: 100%;
+    width: 100%; /* Ensure model-viewer fills its container */
+    height: 100%; /* Ensure model-viewer fills its container */
     border: none; /* Remove any default borders */
 }
 
 /* Styles for buttons below the viewer */
 .controls-below-viewer {
-    margin-top: 10px; /* Reduced top margin */
     display: flex; /* Make it a flex container */
-    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     justify-content: center; /* Center buttons horizontally */
-    align-items: center; /* Vertically align items */
-    gap: 15px; /* Space between elements */
-    padding-bottom: 10px; /* Reduced padding below buttons */
-    flex-shrink: 0; /* Prevent controls from shrinking */
+    gap: 20px; /* Space between buttons */
+    margin-bottom: 20px; /* Space below the controls */
+    flex-shrink: 0; /* ADDED: Prevent controls from shrinking */
 }
 
 .action-button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 8px 15px; /* Smaller padding for action buttons */
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9em; /* Smaller font for action buttons */
+    font-size: 1em;
     transition: background-color 0.3s ease;
 }
 
@@ -119,44 +103,42 @@ p {
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: auto; /* Centered */
+    margin: 15% auto; /* 15% from the top and centered horizontally */
     padding: 20px;
     border: 1px solid #888;
-    width: 90%; /* Responsive width */
-    max-width: 400px; /* Max width for pop-up */
+    width: 80%; /* Could be more responsive */
+    max-width: 500px; /* Max width for pop-up */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative; /* For close button positioning */
-    text-align: center;
 }
 
 .close-button {
     color: #aaa;
+    float: right; /* Position to the right */
     font-size: 28px;
     font-weight: bold;
     position: absolute; /* Absolute position within modal-content */
     top: 10px;
     right: 15px;
-    cursor: pointer; /* Add cursor pointer */
 }
 
 .close-button:hover,
 .close-button:focus {
     color: black;
     text-decoration: none;
+    cursor: pointer;
 }
 
 /* QR Code specific styling within modal */
 .qr-code-wrapper {
-    margin: 20px auto 10px auto; /* Center QR code */
-    width: 100px; /* Fixed size for QR image container */
-    height: 100px;
+    margin: 20px auto;
+    width: 150px; /* Fixed size for QR image container */
+    height: 150px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -168,27 +150,4 @@ p {
     width: 100%; /* Make image fill its container */
     height: 100%;
     display: block; /* Remove extra space below image */
-}
-
-/* Media queries for responsiveness within the 3D viewer page itself */
-@media (max-width: 600px) {
-    body {
-        padding: 5px; /* Even less padding on very small screens */
-    }
-    h1 {
-        font-size: 1.2em; /* Smaller heading on small phones */
-    }
-    p {
-        font-size: 0.8em; /* Smaller paragraph text on small phones */
-    }
-    .dimensions-text {
-        font-size: 0.7em; /* Smallest dimensions text on small phones */
-    }
-    .action-button {
-        font-size: 0.8em; /* Smaller action buttons on small phones */
-        padding: 6px 12px;
-    }
-    .controls-below-viewer {
-        gap: 10px; /* Reduce gap between buttons */
-    }
 }

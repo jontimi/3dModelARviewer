@@ -12,7 +12,7 @@ const qrCodeImage = document.getElementById("qr-code-image");
 // --- Feature: Reset 3D View ---
 if (resetButton) {
     resetButton.addEventListener("click", () => {
-        modelViewer.cameraOrbit = "0deg 75deg auto"; 
+        modelViewer.cameraOrbit = "0deg 75deg auto"; // Resets to initial view
         modelViewer.fieldOfView = "40deg"; // Resets any zoom level
         console.log("3D View Reset.");
     });
@@ -25,17 +25,17 @@ function generateQRCode() {
     if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
         try {
             new QRious({
-                element: qrCodeImage, 
+                element: qrCodeImage, // The canvas element to draw on
                 value: pageUrl,
-                size: 100, 
-                level: 'H' 
+                size: 150, // Size of the QR code in pixels
+                level: 'H' // Error correction level (L, M, Q, H)
             });
-            qrCodeImage.style.display = 'block'; 
-            qrCodeLink.href = pageUrl; 
+            qrCodeImage.style.display = 'block'; // Make sure the image is visible
+            qrCodeLink.href = pageUrl; // Make the QR code image a clickable link
             console.log("QR Code generated for:", pageUrl);
         } catch (error) {
             console.error("Error generating QR code:", error);
-            qrCodeImage.style.display = 'none'; 
+            qrCodeImage.style.display = 'none'; // Hide if generation fails
         }
     } else {
         qrCodeImage.style.display = 'none';
@@ -46,8 +46,8 @@ function generateQRCode() {
 // Event listener for the "AR QR" button to show the modal
 if (arQrButton) {
     arQrButton.addEventListener("click", () => {
-        qrModal.style.display = "flex"; 
-        generateQRCode(); 
+        qrModal.style.display = "block"; // Show the modal
+        generateQRCode(); // Generate QR code when modal opens
         console.log("QR Modal opened.");
     });
 }
@@ -55,7 +55,7 @@ if (arQrButton) {
 // Event listener for the close button inside the modal
 if (closeQrModal) {
     closeQrModal.addEventListener("click", () => {
-        qrModal.style.display = "none";
+        qrModal.style.display = "none"; // Hide the modal
         console.log("QR Modal closed.");
     });
 }
