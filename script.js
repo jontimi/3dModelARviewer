@@ -1,5 +1,5 @@
-// Get references to elements
-const modelViewer = document.getElementById("ar-model-viewer");
+// Get references to elements - these can be defined outside DOMContentLoaded
+// if they don't directly depend on modelViewer, but it's cleaner to keep them together.
 const resetButton = document.getElementById("reset-view-button");
 const arQrButton = document.getElementById("ar-qr-button");
 const shareButton = document.getElementById("share-button");
@@ -9,39 +9,69 @@ const closeQrModal = document.getElementById("close-qr-modal");
 const qrCodeLink = document.getElementById("qr-code-link");
 const qrCodeImage = document.getElementById("qr-code-image");
 
-// --- Language Toggle Button (ensure this element exists in index.html for translation) ---
 const langToggleButton = document.getElementById("lang-toggle-button");
 
+let currentLanguage = localStorage.getItem('language') || 'en';
 
-// --- Feature: Reset 3D View ---
-if (resetButton) {
-    resetButton.addEventListener("click", () => {
-        modelViewer.cameraOrbit = "0deg 75deg auto";
-        modelViewer.fieldOfView = "40deg"; // Resets any zoom level
-        console.log("3D View Reset.");
-    });
-}
+// Define modelViewer inside DOMContentLoaded to ensure the element is available
+let modelViewer; 
 
-// --- Feature: QR Code Pop-up ---
+document.addEventListener("DOMContentLoaded", () => {
+    // Assign modelViewer here when the DOM is fully loaded
+    modelViewer = document.querySelector("model-viewer");
+
+    // --- Feature: Reset 3D View ---
+    if (resetButton && modelViewer) { // Ensure modelViewer is also found here
+        resetButton.addEventListener("click", () => {
+            modelViewer.cameraOrbit = "0deg 75deg auto";
+            modelViewer.fieldOfView = "40deg"; // Resets any zoom level
+            console.log("3D View Reset.");
+        });
+    } else if (resetButton) {
+        console.warn("Reset button found but model-viewer not found at DOMContentLoaded.");
+    }
+
+    // --- AR Instructions Logic (Removed code to show ar-overlay-instructions) ---
+    // The ar-overlay-instructions element is no longer in index.html,
+    // so no JavaScript logic is needed to show/hide it based on ar-status.
+    if (modelViewer) {
+        modelViewer.addEventListener('ar-status', (event) => {
+            const arStatus = event.detail.status;
+            console.log("AR Status:", arStatus); // Log AR status for debugging
+            // Removed logic to display arOverlayInstructions based on arStatus.
+        });
+    } else {
+        console.warn("model-viewer element not found after DOMContentLoaded.");
+    }
+
+    const savedLang = localStorage.getItem('language');
+    if (savedLang) {
+        setLanguage(savedLang);
+    } else {
+        setLanguage(document.documentElement.lang);
+    }
+});
+
+
+// --- Feature: QR Code Pop-up (Can remain outside DOMContentLoaded as its triggers are buttons) ---
 function generateQRCode() {
-    const pageUrl = window.location.href; // QR code links to the current page
+    const pageUrl = window.location.href;
 
     if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
         try {
-            // Clear previous QR code to prevent issues on re-generation
-            qrCodeImage.src = '';
+            qrCodeImage.src = ''; // Clear previous QR
             new QRious({
-                element: qrCodeImage,
+                element: qrCodeImage, 
                 value: pageUrl,
-                size: 150, // <-- **QR CODE SIZE**
-                level: 'H'
+                size: 150, 
+                level: 'H' 
             });
             qrCodeImage.style.display = 'block';
-            qrCodeLink.href = pageUrl; // Ensure link points to current page
+            qrCodeLink.href = pageUrl;
             console.log("QR Code generated for:", pageUrl);
         } catch (error) {
             console.error("Error generating QR code:", error);
-            qrCodeImage.style.display = 'none';
+            qrCodeImage.style.display = 'none'; 
         }
     } else {
         qrCodeImage.style.display = 'none';
@@ -51,8 +81,8 @@ function generateQRCode() {
 
 if (arQrButton) {
     arQrButton.addEventListener("click", () => {
-        qrModal.style.display = "flex"; // Use flex to center the modal
-        generateQRCode(); // Generate QR code when modal opens
+        qrModal.style.display = "flex";
+        generateQRCode();
         console.log("QR Modal opened.");
     });
 }
@@ -64,7 +94,6 @@ if (closeQrModal) {
     });
 }
 
-// Close the modal if the user clicks outside of the modal content
 if (qrModal) {
     window.addEventListener("click", (event) => {
         if (event.target == qrModal) {
@@ -92,6 +121,7 @@ if (shareButton) {
         } else {
             console.warn('Web Share API not supported in this browser/context. Providing fallback.');
             // Fallback for desktop or unsupported browsers: copy link to clipboard
+            // (Note: Clipboard API also requires secure context (HTTPS) or localhost)
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 alert("Share feature not supported. The link has been copied to your clipboard!");
@@ -106,7 +136,7 @@ if (shareButton) {
 }
 
 
-// --- Language Management (ensure elements with data-en/data-he exist) ---
+// --- Language Management ---
 const translations = {
     'main-title': {
         he: 'תבנית פשוטה לצפייה במודל תלת-ממדי AR',
@@ -136,7 +166,7 @@ const translations = {
         he: 'סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.',
         en: 'Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.'
     },
-    'ar-placement-guidance': { // NEW TRANSLATION
+    'ar-placement-guidance': {
         he: 'במצב מציאות רבודה: הזיזו את הטלפון לאט לסריקת הרצפה/משטח, ואז הקישו על המסך למיקום המודל. סובבו עם שתי אצבעות.',
         en: 'Once in AR: Slowly move your phone to scan the floor/surface, then tap the screen to place the model. Rotate it with two fingers.'
     },
@@ -146,7 +176,6 @@ const translations = {
     }
 };
 
-let currentLanguage = localStorage.getItem('language') || 'en';
 
 function setLanguage(lang) {
     Object.keys(translations).forEach(id => {
@@ -171,14 +200,6 @@ function setLanguage(lang) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const savedLang = localStorage.getItem('language');
-    if (savedLang) {
-        setLanguage(savedLang);
-    } else {
-        setLanguage(document.documentElement.lang);
-    }
-});
 
 if (langToggleButton) {
     langToggleButton.addEventListener("click", () => {
