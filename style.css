@@ -1,80 +1,59 @@
 body {
     font-family: sans-serif;
-    /* margin: 20px; REMOVED: Handled by html, body below for full control */
+    margin: 20px;
     text-align: center;
     background-color: #f8f8f8;
     color: #333;
-
-    /* ADDED: Make body a flex container to manage vertical space */
-    display: flex;
-    flex-direction: column; /* Stack its children (h1, p, viewer, controls) vertically */
-    height: 100%; /* ADDED: Ensure body takes full height */
-    width: 100%; /* ADDED: Ensure body takes full width */
-    margin: 0; /* ADDED: Remove default body margin */
-    padding: 0; /* ADDED: Remove default body padding */
-    overflow: hidden; /* ADDED: Prevent scrollbars on the inner page itself if content overflows */
-}
-
-/* ADDED: Ensure html also takes full height */
-html {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
 }
 
 h1 {
     color: #2a2a2a;
-    flex-shrink: 0; /* ADDED: Prevent h1 from shrinking */
 }
 
 p {
     max-width: 600px;
     margin: 10px auto 30px auto;
     line-height: 1.6;
-    flex-shrink: 0; /* ADDED: Prevent p from shrinking */
 }
 
-/* Dimensions Text */
+/* Dimensions Text (Now styled for above viewer) */
 .dimensions-text {
-    font-size: 0.9em; /* Smaller font size for dimensions */
-    color: #666;
-    margin-bottom: 20px; /* Space below dimensions text */
-    flex-shrink: 0; /* ADDED: Prevent dimensions-text from shrinking */
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin: 10px auto 20px auto; /* Adjust margin for spacing above viewer */
+    text-align: center;
+    max-width: 600px; /* To prevent it from stretching too wide */
 }
 
 
 /* Styling for the 3D AR Model Viewer Container */
 .product-3d-viewer-container {
-    flex-grow: 1; /* This is crucial: makes the container take up all available vertical space */
     width: 100%;
-    /* ADDED: Ensure it's a flex container and centers its content */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px; /* ADDED: Ensure a good minimum height for the viewer */
-    margin-bottom: 20px; /* Space below the viewer */
-    
+    max-width: 800px; /* Optional: Adjust based on desired max width */
+    height: 400px;    /* Fixed height for the viewer */
+    margin: 20px auto; /* Center the viewer and add vertical spacing */
     background-color: #ffffff; /* White background within the viewer */
     border: 1px solid #ddd; /* Light border */
     border-radius: 8px; /* Slightly rounded corners */
-    overflow: hidden; /* Hide any overflow, important for model-viewer */
+    overflow: hidden; /* Ensures model doesn't overflow container */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
 }
 
 .product-3d-viewer-container model-viewer {
-    width: 100%; /* Ensure model-viewer fills its container */
-    height: 100%; /* Ensure model-viewer fills its container */
-    border: none; /* Remove any default borders */
+    width: 100%;
+    height: 100%;
 }
 
 /* Styles for buttons below the viewer */
 .controls-below-viewer {
+    margin-top: 20px;
     display: flex; /* Make it a flex container */
-    justify-content: center; /* Center buttons horizontally */
-    gap: 20px; /* Space between buttons */
-    margin-bottom: 20px; /* Space below the controls */
-    flex-shrink: 0; /* ADDED: Prevent controls from shrinking */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    justify-content: center; /* CENTER BUTTONS HORIZONTALLY */
+    align-items: center; /* Vertically align items */
+    gap: 15px; /* Space between elements */
+    padding-bottom: 20px; /* Add some padding below buttons */
 }
 
 .action-button {
@@ -84,7 +63,7 @@ p {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
@@ -92,7 +71,7 @@ p {
     background-color: #0056b3;
 }
 
-/* Modal (Pop-up) Styles - These are for your QR modal, not the main pop-up from the client page */
+/* Modal (Pop-up) Styles */
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -103,18 +82,21 @@ p {
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered horizontally */
+    margin: auto; /* Centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more responsive */
-    max-width: 500px; /* Max width for pop-up */
+    width: 90%; /* Could be more responsive */
+    max-width: 400px; /* Max width for pop-up */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative; /* For close button positioning */
+    text-align: center;
 }
 
 .close-button {
@@ -136,9 +118,9 @@ p {
 
 /* QR Code specific styling within modal */
 .qr-code-wrapper {
-    margin: 20px auto;
-    width: 150px; /* Fixed size for QR image container */
-    height: 150px;
+    margin: 20px auto 10px auto; /* Center QR code */
+    width: 100px; /* Fixed size for QR image container */
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
