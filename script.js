@@ -2,7 +2,7 @@
 const modelViewer = document.getElementById("ar-model-viewer");
 const resetButton = document.getElementById("reset-view-button");
 const arQrButton = document.getElementById("ar-qr-button"); 
-const shareButton = document.getElementById("share-button"); // NEW: Get the Share button
+const shareButton = document.getElementById("share-button");
 
 const qrModal = document.getElementById("qr-modal");       
 const closeQrModal = document.getElementById("close-qr-modal"); 
@@ -10,17 +10,17 @@ const qrCodeLink = document.getElementById("qr-code-link");
 const qrCodeImage = document.getElementById("qr-code-image");
 
 // --- Feature: Reset 3D View ---
-if (resetButton) {
+if (resetButton && modelViewer) {
     resetButton.addEventListener("click", () => {
         modelViewer.cameraOrbit = "0deg 75deg auto"; 
-        modelViewer.fieldOfView = "40deg"; // Resets any zoom level
+        modelViewer.fieldOfView = "40deg";
         console.log("3D View Reset.");
     });
 }
 
 // --- Feature: QR Code Pop-up ---
 function generateQRCode() {
-    const pageUrl = window.location.href; // QR code links to the current page
+    const pageUrl = window.location.href;
 
     if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
         try {
@@ -71,36 +71,44 @@ if (qrModal) {
 }
 
 // Generate QR code when model loads (it will be hidden until button press)
-// This listener remains for the QR code functionality
-modelViewer.addEventListener("model-load", generateQRCode);
-// Also try to generate on initial DOM content load for robustness
-document.addEventListener("DOMContentLoaded", generateQRCode);
+if (modelViewer) {
+    modelViewer.addEventListener("model-load", () => {
+        console.log("3D Model loaded successfully!");
+        generateQRCode();
+    });
+    modelViewer.addEventListener("error", (event) => {
+        console.error("Error loading 3D model:", event);
+    });
+}
 
+// Also try to generate on initial DOM content load for robustness
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM Content Loaded.");
+    if (modelViewer && !modelViewer.modelIsLoaded) {
+        generateQRCode();
+    }
+});
 
 // --- NEW FEATURE: Share Button ---
 if (shareButton) {
     shareButton.addEventListener("click", async () => {
-        if (navigator.share) { // Check if Web Share API is supported
+        if (navigator.share) {
             try {
                 await navigator.share({
-                    title: document.title, // Uses the page title
-                    url: window.location.href // Uses the current page URL
+                    title: document.title,
+                    url: window.location.href
                 });
                 console.log('Page shared successfully');
             } catch (error) {
-                // User cancelled the share or an error occurred
                 console.error('Error sharing the page:', error);
             }
         } else {
             console.warn('Web Share API not supported in this browser/context. Providing fallback.');
-            // Fallback for desktop or unsupported browsers: copy link to clipboard
-            // (Note: Clipboard API also requires secure context (HTTPS) or localhost)
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 alert("Share feature not supported. The link has been copied to your clipboard!");
                 console.log('Link copied to clipboard as fallback.');
             } catch (err) {
-                // If clipboard API fails (e.g., not secure context, permission issues)
                 alert("Share feature not supported. You can manually copy the link: " + window.location.href);
                 console.error('Failed to copy link to clipboard:', err);
             }
