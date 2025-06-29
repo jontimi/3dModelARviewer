@@ -25,7 +25,7 @@ p {
     font-size: 0.95em;
     font-weight: bold;
     color: #555;
-    margin: 2px auto 3px auto; /* Reduced from 3px auto 5px auto for even less space */
+    margin: 2px auto 3px auto;
     text-align: center;
     max-width: 600px;
 }
@@ -95,7 +95,7 @@ p {
     padding: 8px;
     border: 1px solid #888;
     width: 90%;
-    max-width: 300px;
+    max-width: 320px; /* Increased max-width to accommodate larger QR */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative;
@@ -121,9 +121,9 @@ p {
 
 /* QR Code specific styling within modal */
 .qr-code-wrapper {
-    margin: 8px auto 3px auto;
-    width: 70px;
-    height: 70px;
+    margin: 10px auto; /* Adjusted margins */
+    width: 150px; /* Increased from 70px */
+    height: 150px; /* Increased from 70px */
     display: flex;
     justify-content: center;
     align-items: center;

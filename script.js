@@ -1,22 +1,22 @@
 // Get references to elements
 const modelViewer = document.getElementById("ar-model-viewer");
 const resetButton = document.getElementById("reset-view-button");
-const arQrButton = document.getElementById("ar-qr-button"); 
+const arQrButton = document.getElementById("ar-qr-button");
 const shareButton = document.getElementById("share-button");
 
-const qrModal = document.getElementById("qr-modal");       
-const closeQrModal = document.getElementById("close-qr-modal"); 
+const qrModal = document.getElementById("qr-modal");
+const closeQrModal = document.getElementById("close-qr-modal");
 const qrCodeLink = document.getElementById("qr-code-link");
 const qrCodeImage = document.getElementById("qr-code-image");
 
-// --- Language Toggle Button ---
+// --- Language Toggle Button (ensure this element exists in index.html for translation) ---
 const langToggleButton = document.getElementById("lang-toggle-button");
 
 
 // --- Feature: Reset 3D View ---
 if (resetButton) {
     resetButton.addEventListener("click", () => {
-        modelViewer.cameraOrbit = "0deg 75deg auto"; 
+        modelViewer.cameraOrbit = "0deg 75deg auto";
         modelViewer.fieldOfView = "40deg"; // Resets any zoom level
         console.log("3D View Reset.");
     });
@@ -29,14 +29,14 @@ function generateQRCode() {
     if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
         try {
             // Clear previous QR code to prevent issues on re-generation
-            qrCodeImage.src = ''; 
+            qrCodeImage.src = '';
             new QRious({
-                element: qrCodeImage, 
+                element: qrCodeImage,
                 value: pageUrl,
-                size: 100, 
-                level: 'H' 
+                size: 150, // <-- **INCREASED SIZE HERE** to match CSS dimensions
+                level: 'H'
             });
-            qrCodeImage.style.display = 'block'; 
+            qrCodeImage.style.display = 'block';
             qrCodeLink.href = pageUrl; // Ensure link points to current page
             console.log("QR Code generated for:", pageUrl);
         } catch (error) {
@@ -106,7 +106,7 @@ if (shareButton) {
 }
 
 
-// --- Language Management ---
+// --- Language Management (ensure elements with data-en/data-he exist) ---
 const translations = {
     'main-title': {
         he: 'תבנית פשוטה לצפייה במודל תלת-ממדי AR',
@@ -136,7 +136,8 @@ const translations = {
         he: 'סרוק קוד זה עם הטלפון שלך כדי לפתוח את דף האינטרנט. לאחר מכן, הקש על כפתור ה-AR במודל התלת-ממדי כדי להפעיל מציאות רבודה.',
         en: 'Scan this QR code with your phone to open the webpage. Then, tap the AR button on the 3D model to activate Augmented Reality.'
     },
-    'footer-main-text': { // For the new span around footer text
+    // Assuming 'footer-main-text' is correctly added to your index.html
+    'footer-main-text': {
         he: '© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים',
         en: '© 2025 JZS | 3D & AR Product Visualization'
     }
@@ -155,7 +156,7 @@ function setLanguage(lang) {
 
     // Update document direction and language attribute
     document.body.dir = (lang === 'he') ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang; 
+    document.documentElement.lang = lang;
 
     localStorage.setItem('language', lang);
     currentLanguage = lang;
@@ -164,19 +165,20 @@ function setLanguage(lang) {
     if (langToggleButton) {
         langToggleButton.textContent = (lang === 'he') ? 'English' : 'עברית';
     }
-    
-    // Update page title
-    document.title = translations['main-title'][currentLanguage];
+
+    // Update page title (ensure 'main-title' translation exists)
+    if (translations['main-title'] && translations['main-title'][currentLanguage]) {
+        document.title = translations['main-title'][currentLanguage];
+    }
 }
 
 // Initial language setup on page load
 document.addEventListener("DOMContentLoaded", () => {
-    // Apply saved language preference, or use default HTML lang (English)
     const savedLang = localStorage.getItem('language');
     if (savedLang) {
         setLanguage(savedLang);
     } else {
-        setLanguage(document.documentElement.lang); // Use language from <html> tag
+        setLanguage(document.documentElement.lang);
     }
 });
 
