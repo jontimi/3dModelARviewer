@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <style>
+        /* Styles for the main footer */
+        .main-footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #777;
+            text-align: center; /* Center the footer content */
+            padding-bottom: 20px; /* Add some padding at the bottom of the page */
+        }
+
+        /* Style for links within the footer */
+        .main-footer a {
+            color: inherit; /* Inherits the color from the parent (.main-footer) */
+            text-decoration: none; /* Removes the default underline */
+        }
+
+        .main-footer a:hover {
+            text-decoration: underline; /* Adds underline on hover for user feedback */
+        }
+    </style>
 </head>
 <body>
 
@@ -17,8 +37,8 @@
 
     <div class="product-3d-viewer-container">
         <model-viewer
-            src="models/HiveShelf90cm.glb"  
-            poster="poster.webp"  
+            src="models/HiveShelf90cm.glb"
+            poster="poster.webp"
             ar
             ar-modes="webxr scene-viewer quick-look"
             ar-scale="fixed"
@@ -52,8 +72,8 @@
         </div>
     </div>
 
-    <footer style="margin-top: 40px; font-size: 14px; color: #777;">
-        <span id="footer-main-text" data-en="© 2025 JZS | 3D & AR Product Visualization" data-he="© 2025 JZS | הדמיה תלת-ממדית ומציאות רבודה למוצרים">© 2025 JZS | 3D & AR Product Visualization</span> | <a href="mailto:jonzvis@gmail.com">jonzvis@gmail.com</a>
+    <footer class="main-footer">
+        Made by <a href="https://jzs3d.framer.website/jzs3d" target="_blank">JZS3D</a> | 3D & AR Product Integration
     </footer>
 
     <script src="script.js"></script>
