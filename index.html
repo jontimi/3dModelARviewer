@@ -5,57 +5,309 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model / AR Viewer</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             width: 100vw;
             height: 100vh;
-            overflow: hidden; /* Prevents scrollbars */
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             font-family: Arial, sans-serif;
-            /* These CSS Variables will be set dynamically by script.js */
-            background-color: var(--viewer-bg-color, #f0f0f0); /* Default light grey fallback */
-            color: var(--viewer-text-color, #333333); /* Default text color fallback */
-        }
-        .viewer-header {
-            width: 100%;
-            padding: 15px 20px;
+            background-color: var(--viewer-bg-color, #f0f0f0);
+            color: #333333;
             text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            background-color: var(--header-bg-color, #e0e0e0); /* Default header background fallback */
-            color: var(--header-text-color, #333333); /* Default header text color fallback */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
-            flex-shrink: 0; /* Prevents header from shrinking */
         }
+        
+        /* Main Viewer Container - shown when brand is specified */
+        .main-viewer-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .main-viewer-container h1 {
+            color: #2a2a2a;
+            margin-bottom: 5px;
+            font-size: 1.8em;
+        }
+        .main-viewer-container p {
+            max-width: 600px;
+            margin: 0 auto 10px auto;
+            line-height: 1.6;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .dimensions-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+            margin: 10px auto 20px auto;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .product-3d-viewer-container {
+            width: 95%;
+            max-width: 800px;
+            height: 50vh;
+            min-height: 300px;
+            margin: 0 auto;
+            background-color: var(--model-viewer-bg, #ffffff);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         model-viewer {
-            flex-grow: 1; /* Makes model-viewer take up remaining vertical space */
             width: 100%;
-            /* This CSS Variable will be set dynamically by script.js */
-            background-color: var(--model-viewer-bg, #ffffff); /* Default white for model area fallback */
-            --poster-color: transparent; /* Makes the poster transparent */
+            height: 100%;
+            --poster-color: transparent;
+        }
+
+        .controls-below-viewer {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding-bottom: 20px;
+        }
+
+        .action-button {
+            background-color: var(--button-bg-color, #4CAF50);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .action-button:hover {
+            background-color: var(--button-hover-color, #45a049);
+        }
+
+        .footer-text {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* Brand Input Container - shown when no brand is specified */
+        .brand-input-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center vertically */
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f8f8f8; /* Light background */
+            color: #333;
+        }
+
+        .brand-input-container h1 {
+            font-size: 2.2em;
+            color: #2a2a2a;
+            margin-bottom: 15px;
+        }
+
+        .brand-input-container p {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .brand-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-input-wrapper input[type="text"] {
+            padding: 12px 15px;
+            font-size: 1.1em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            width: 280px;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        .brand-input-wrapper button {
+            background-color: #007bff; /* Blue button */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .brand-input-wrapper button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal styles for QR code */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+        }
+        .close-button-modal {
+            color: #aaa;
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button-modal:hover,
+        .close-button-modal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .qr-code-wrapper {
+            margin: 15px 0;
+        }
+        .qr-code-wrapper img {
+            width: 150px;
+            height: 150px;
+            border: 1px solid #eee;
+            display: block;
+            margin: 0 auto;
+        }
+        .qr-code-wrapper a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .qr-code-wrapper a:hover {
+            text-decoration: underline;
+        }
+
+        /* Media queries for smaller screens */
+        @media (max-width: 768px) {
+            .main-viewer-container {
+                padding: 10px;
+            }
+            .product-3d-viewer-container {
+                height: 45vh;
+            }
+            .controls-below-viewer .action-button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            .brand-input-container h1 {
+                font-size: 1.8em;
+            }
+            .brand-input-container p {
+                font-size: 0.95em;
+            }
+            .brand-input-wrapper input[type="text"] {
+                padding: 10px 12px;
+                font-size: 1em;
+            }
+            .brand-input-wrapper button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="viewerHeader" class="viewer-header">3D/AR Viewer</div>
+    <div id="brandInputContainer" class="brand-input-container" style="display: none;">
+        <h1>Welcome to the 3D AR Model Viewer</h1>
+        <p>Please enter your brand name to view your specific 3D product catalog and AR experience.</p>
+        <div class="brand-input-wrapper">
+            <input type="text" id="brandInput" placeholder="e.g., tudo, neryatech">
+            <button id="submitBrandButton">Go to Brand Page</button>
+        </div>
+        <p style="margin-top: 30px; font-size: 0.85em; color: #888;">(If you were provided a direct link, it might already include the brand.)</p>
+    </div>
 
-    <model-viewer id="modelViewer"
-                  src=""
-                  ar
-                  ar-modes="webxr scene-viewer quick-look"
-                  camera-controls
-                  shadow-intensity="1"
-                  alt="3D Model"
-                  loading="eager"
-                  auto-rotate
-                  auto-rotate-delay="1000"
-                  exposure="1"
-                  field-of-view="45deg">
-    </model-viewer>
+    <div id="mainViewerContainer" class="main-viewer-container" style="display: none;">
+        <h1>Simple 3D AR Model Viewer Template</h1>
+        <p>This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function.</p>
+        <div id="dimensionsText" class="dimensions-text"></div>
+
+        <div class="product-3d-viewer-container">
+            <model-viewer id="modelViewer"
+                          src=""
+                          ar
+                          ar-modes="webxr scene-viewer quick-look"
+                          camera-controls
+                          shadow-intensity="1"
+                          alt="3D Model"
+                          loading="eager"
+                          auto-rotate
+                          auto-rotate-delay="1000"
+                          exposure="1"
+                          field-of-view="45deg">
+            </model-viewer>
+        </div>
+
+        <div class="controls-below-viewer">
+            <button id="reset-view-button" class="action-button">Reset 3D View</button>
+            <button id="ar-qr-button" class="action-button">AR QR</button>
+            <button id="share-button" class="action-button">Share</button>
+            <button id="hebrew-button" class="action-button">עברית</button>
+        </div>
+
+        <div class="footer-text">Made by JZS3D | 3D & AR Product Integration</div>
+    </div>
+
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button-modal" id="close-qr-modal">&times;</span>
+            <h2>Scan for AR or Share</h2>
+            <div class="qr-code-wrapper">
+                <img id="qr-code-image" alt="QR Code">
+                <a id="qr-code-link" href="#" target="_blank">Open Link</a>
+            </div>
+            <p>Scan the QR code with your phone to view in AR or share the link.</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

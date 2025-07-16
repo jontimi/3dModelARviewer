@@ -7,14 +7,18 @@ function getUrlParameter(name) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Main UI Containers
+    var mainViewerContainer = document.getElementById('mainViewerContainer');
+    var brandInputContainer = document.getElementById('brandInputContainer');
+
+    // Elements for the main viewer
     var modelViewer = document.getElementById('modelViewer');
     var dimensionsTextElement = document.getElementById('dimensionsText');
     var mainTitleElement = document.querySelector('.main-viewer-container h1');
     var subTextElement = document.querySelector('.main-viewer-container p:nth-of-type(1)');
     var footerTextElement = document.querySelector('.footer-text');
-    var mainViewerContainer = document.getElementById('mainViewerContainer'); // Get the main container
 
-    // Buttons
+    // Buttons for the main viewer
     const resetButton = document.getElementById("reset-view-button");
     const arQrButton = document.getElementById("ar-qr-button");
     const shareButton = document.getElementById("share-button");
@@ -29,13 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const qrModalText = document.querySelector('#qr-modal p');
     const qrModalOpenLink = document.querySelector('#qr-modal a');
 
-    if (!modelViewer || !dimensionsTextElement || !mainTitleElement || !subTextElement || !footerTextElement || !mainViewerContainer) {
-        console.error("One or more core elements not found. Translation may not work fully.");
-    }
+    // Elements for the brand input landing page
+    const brandInput = document.getElementById('brandInput');
+    const submitBrandButton = document.getElementById('submitBrandButton');
 
+    // Get brand from URL
     var brand = getUrlParameter('brand');
     var modelFileName = getUrlParameter('model');
 
+    // Define brand specific settings
     var brandSettings = {
         'neryatech': {
             model: 'neryatech_120mm_table_model.glb',
@@ -59,8 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
         }
+        // Add more brands here in the future if needed
     };
 
+    // Text translations for main viewer and QR modal
     const translations = {
         en: {
             mainTitle: 'Simple 3D AR Model Viewer Template',
@@ -88,10 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    let currentLanguage = 'en';
+    let currentLanguage = 'en'; // Default language
 
-    var currentSettings = brandSettings[brand] || brandSettings['tudo'];
-
+    // Function to apply translations
     function applyTranslations(lang) {
         // Apply text content
         if (mainTitleElement) mainTitleElement.textContent = translations[lang].mainTitle;
@@ -105,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (qrModalText) qrModalText.textContent = translations[lang].qrModalText;
         if (qrModalOpenLink) qrModalOpenLink.textContent = translations[lang].qrModalOpenLink;
         
-        if (dimensionsTextElement && currentSettings.dimensionsText) {
+        if (dimensionsTextElement && currentSettings && currentSettings.dimensionsText) {
             dimensionsTextElement.textContent = currentSettings.dimensionsText[lang];
         }
 
@@ -114,135 +121,167 @@ document.addEventListener('DOMContentLoaded', function() {
             mainViewerContainer.style.direction = (lang === 'he') ? 'rtl' : 'ltr';
             
             // Adjust text alignment for text elements within the main container
-            // (These should generally align with the container's direction)
             if (mainTitleElement) mainTitleElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
             if (subTextElement) subTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
             if (dimensionsTextElement) dimensionsTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
             if (footerTextElement) footerTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
-            
-            // Ensure buttons within controls-below-viewer are not affected by text-align if not desired
-            // The flexbox 'justify-content: center' on controls-below-viewer will keep them centered.
-            // If individual button text needs to be RTL, it will happen naturally due to direction:rtl
         }
 
         // Adjust QR modal direction and text alignment
         if (qrModalTitle) qrModalTitle.style.textAlign = (lang === 'he') ? 'right' : 'center';
         if (qrModalText) qrModalText.style.textAlign = (lang === 'he') ? 'right' : 'center';
-        if (qrModalOpenLink) qrModalOpenLink.style.textAlign = (lang === 'he') ? 'right' : 'center'; // Or left for link
+        if (qrModalOpenLink) qrModalOpenLink.style.textAlign = (lang === 'he') ? 'right' : 'center';
         if (qrModal) qrModal.querySelector('.modal-content').style.direction = (lang === 'he') ? 'rtl' : 'ltr';
 
-
         // Crucially, prevent modelViewer and its immediate container from inheriting RTL
-        // We set direction: ltr explicitly for the model viewer container.
-        // This ensures the model and its controls behave consistently regardless of page language.
         const product3dViewerContainer = document.querySelector('.product-3d-viewer-container');
         if (product3dViewerContainer) {
             product3dViewerContainer.style.direction = 'ltr';
         }
     }
 
-    // Initial load: Apply current settings and default English translations
-    document.body.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
-    modelViewer.style.setProperty('--model-viewer-bg', currentSettings.modelViewerAreaBg);
-    
-    document.querySelectorAll('.action-button').forEach(button => {
-        button.style.setProperty('--button-bg-color', currentSettings.buttonBgColor);
-        button.style.setProperty('--button-hover-color', currentSettings.buttonHoverColor);
-        button.style.backgroundColor = currentSettings.buttonBgColor;
-        button.onmouseover = () => button.style.backgroundColor = currentSettings.buttonHoverColor;
-        button.onmouseout = () => button.style.backgroundColor = currentSettings.buttonBgColor;
-    });
+    // --- Initial Page Load Logic ---
+    if (brand) {
+        // If brand is specified, show the main viewer and hide the input page
+        if (mainViewerContainer) mainViewerContainer.style.display = 'flex';
+        if (brandInputContainer) brandInputContainer.style.display = 'none';
 
-    modelViewer.src = 'models/' + (modelFileName || currentSettings.model); 
-    modelViewer.alt = "3D model of " + modelViewer.src.replace('models/', '').replace('.glb', '').replace('.usdz', '');
-    console.log('Loading model for ' + (brand || 'default') + ': ' + modelViewer.src);
-
-    applyTranslations('en'); // Initial English translation
-
-    // --- Button Event Listeners ---
-    if (resetButton) {
-        resetButton.addEventListener("click", () => {
-            modelViewer.cameraOrbit = "0deg 75deg auto"; 
-            modelViewer.fieldOfView = "45deg"; 
-            console.log("3D View Reset.");
-        });
-    }
-
-    function generateQRCode() {
-        const pageUrl = window.location.href; 
-        if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
-            try {
-                new QRious({
-                    element: qrCodeImage, 
-                    value: pageUrl,
-                    size: 150, 
-                    level: 'H' 
-                });
-                qrCodeImage.style.display = 'block';
-                qrCodeLink.href = pageUrl;
-                console.log("QR Code generated for:", pageUrl);
-            } catch (error) {
-                console.error("Error generating QR code:", error);
-                qrCodeImage.style.display = 'none';
-            }
-        } else {
-            console.warn("QRious library or QR code elements not found, or page URL is missing.");
+        // Determine current settings based on 'brand' parameter, or use TUDO as default if unrecognized
+        // IMPORTANT: currentSettings is needed for applyTranslations to get dimensionsText
+        var currentSettings = brandSettings[brand] || brandSettings['tudo'];
+        if (!brandSettings[brand]) {
+            console.warn(`Brand "${brand}" not recognized. Defaulting to TUDO settings.`);
         }
-    }
 
-    if (arQrButton) {
-        arQrButton.addEventListener("click", () => {
-            generateQRCode(); 
-            qrModal.style.display = "flex"; 
-            console.log("AR / QR Code button clicked. Modal shown.");
+        // Apply dynamic styling using CSS variables
+        document.body.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
+        modelViewer.style.setProperty('--model-viewer-bg', currentSettings.modelViewerAreaBg);
+        
+        document.querySelectorAll('.action-button').forEach(button => {
+            button.style.setProperty('--button-bg-color', currentSettings.buttonBgColor);
+            button.style.setProperty('--button-hover-color', currentSettings.buttonHoverColor);
+            button.style.backgroundColor = currentSettings.buttonBgColor;
+            button.onmouseover = () => button.style.backgroundColor = currentSettings.buttonHoverColor;
+            button.onmouseout = () => button.style.backgroundColor = currentSettings.buttonBgColor;
         });
-    }
 
-    if (closeQrModal) {
-        closeQrModal.addEventListener("click", () => {
-            qrModal.style.display = "none";
-            console.log("QR Modal closed.");
-        });
-    }
+        // Load the model: specific model from URL (if provided) or brand's default
+        modelViewer.src = 'models/' + (modelFileName || currentSettings.model); 
+        modelViewer.alt = "3D model of " + modelViewer.src.replace('models/', '').replace('.glb', '').replace('.usdz', '');
+        console.log('Loading model for ' + (brand || 'default') + ': ' + modelViewer.src);
 
-    window.addEventListener("click", (event) => {
-        if (event.target == qrModal) {
-            qrModal.style.display = "none";
-            console.log("QR Modal closed by outside click.");
+        // Apply initial English translation (this will also set dimensions and RTL for content)
+        applyTranslations('en');
+
+        // --- Button Event Listeners for Main Viewer ---
+        if (resetButton) {
+            resetButton.addEventListener("click", () => {
+                modelViewer.cameraOrbit = "0deg 75deg auto"; 
+                modelViewer.fieldOfView = "45deg"; 
+                console.log("3D View Reset.");
+            });
         }
-    });
 
-    if (shareButton) {
-        shareButton.addEventListener("click", async () => {
-            if (navigator.share) {
+        function generateQRCode() {
+            const pageUrl = window.location.href; 
+            if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
                 try {
-                    await navigator.share({
-                        title: document.title,
-                        url: window.location.href
+                    new QRious({
+                        element: qrCodeImage, 
+                        value: pageUrl,
+                        size: 150, 
+                        level: 'H' 
                     });
-                    console.log('Page shared successfully');
+                    qrCodeImage.style.display = 'block';
+                    qrCodeLink.href = pageUrl;
+                    console.log("QR Code generated for:", pageUrl);
                 } catch (error) {
-                    console.error('Error sharing the page:', error);
+                    console.error("Error generating QR code:", error);
+                    qrCodeImage.style.display = 'none';
                 }
             } else {
-                console.warn('Web Share API not supported. Providing fallback.');
-                try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    alert("Share feature not supported. The link has been copied to your clipboard!");
-                    console.log('Link copied to clipboard as fallback.');
-                } catch (err) {
-                    alert("Share feature not supported. You can manually copy the link: " + window.location.href);
-                    console.error('Failed to copy link to clipboard:', err);
-                }
+                console.warn("QRious library or QR code elements not found, or page URL is missing.");
+            }
+        }
+
+        if (arQrButton) {
+            arQrButton.addEventListener("click", () => {
+                generateQRCode(); 
+                qrModal.style.display = "flex"; 
+                console.log("AR / QR Code button clicked. Modal shown.");
+            });
+        }
+
+        if (closeQrModal) {
+            closeQrModal.addEventListener("click", () => {
+                qrModal.style.display = "none";
+                console.log("QR Modal closed.");
+            });
+        }
+
+        window.addEventListener("click", (event) => {
+            if (event.target == qrModal) {
+                qrModal.style.display = "none";
+                console.log("QR Modal closed by outside click.");
             }
         });
-    }
 
-    if (hebrewButton) {
-        hebrewButton.addEventListener("click", () => {
-            currentLanguage = (currentLanguage === 'en') ? 'he' : 'en';
-            applyTranslations(currentLanguage);
-            console.log("Language toggled to: " + currentLanguage);
-        });
+        if (shareButton) {
+            shareButton.addEventListener("click", async () => {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: document.title,
+                            url: window.location.href
+                        });
+                        console.log('Page shared successfully');
+                    } catch (error) {
+                        console.error('Error sharing the page:', error);
+                    }
+                } else {
+                    console.warn('Web Share API not supported. Providing fallback.');
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        alert("Share feature not supported. The link has been copied to your clipboard!");
+                        console.log('Link copied to clipboard as fallback.');
+                    } catch (err) {
+                        alert("Share feature not supported. You can manually copy the link: " + window.location.href);
+                        console.error('Failed to copy link to clipboard:', err);
+                    }
+                }
+            });
+        }
+
+        if (hebrewButton) {
+            hebrewButton.addEventListener("click", () => {
+                currentLanguage = (currentLanguage === 'en') ? 'he' : 'en';
+                applyTranslations(currentLanguage);
+                console.log("Language toggled to: " + currentLanguage);
+            });
+        }
+
+    } else {
+        // If no brand is specified, show the brand input page
+        if (mainViewerContainer) mainViewerContainer.style.display = 'none';
+        if (brandInputContainer) brandInputContainer.style.display = 'flex'; // Use flex for centering content
+
+        if (submitBrandButton && brandInput) {
+            submitBrandButton.addEventListener('click', () => {
+                const enteredBrand = brandInput.value.trim().toLowerCase();
+                if (enteredBrand) {
+                    // Redirect to the page with the brand parameter
+                    window.location.href = window.location.origin + window.location.pathname + '?brand=' + enteredBrand;
+                } else {
+                    alert('Please enter a brand name.');
+                }
+            });
+
+            // Allow pressing Enter key to submit
+            brandInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    submitBrandButton.click();
+                }
+            });
+        }
     }
 });
