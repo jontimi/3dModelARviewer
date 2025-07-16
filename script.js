@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var brandSettings = {
         'neryatech': {
             model: 'neryatech_120mm_table_model.glb',
-            // UPDATED DIMENSIONS
             dimensionsText: {
                 en: 'Dimensions: L 120mm x H 75mm x D 120mm',
                 he: 'מידות: אורך 120 מ"מ X גובה 75 מ"מ X עומק 120 מ"מ'
@@ -67,9 +66,88 @@ document.addEventListener('DOMContentLoaded', function() {
             modelViewerAreaBg: '#ffffff',
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
-        }
+        },
+        // --- UPDATED: Brand Name Variations ---
+        // NeryaTech Variations
+        'nerya tech': null,
+        'nerya': null,
+        'neria tech': null,
+        'neryatec': null,
+        'nerya-tech': null,
+        'neryatech ar': null,
+        'neriatech': null,
+        'nerytech': null,
+        'neryateck': null,   // Added
+        'neryatach': null,   // Added
+        'neryateh': null,    // Added
+        'nery': null,        // Added
+        'naryatech': null,   // Added
+        'neriatech ar': null, // Added
+        'neryatech ar viewer': null, // Added
+        'neryatech viewer': null, // Added
+        'nerya tech viewer': null, // Added
+        'nerya viewer': null, // Added
+        // Tudo Variations
+        'tu doo': null,
+        'too doo': null,
+        'tudu': null,
+        'todo': null,
+        'tudodesign': null,
+        'tudo design': null,
+        'todo dasign': null,
+        'tuddo': null,       // Added
+        'tutto': null,       // Added
+        'tudos': null,       // Added
+        'tudu design': null, // Added
+        'todo design': null,  // Added
+        'tudoar': null,      // Added
+        'tudo ar': null,     // Added
+        'tudoviewer': null,  // Added
+        'tudo viewer': null, // Added
+        'tudodesigns': null  // Added
         // Add more brands here in the future if needed
     };
+
+    // --- UPDATED: Map variations to their actual brand objects ---
+    // This must be done AFTER brandSettings is fully defined
+    brandSettings['nerya tech'] = brandSettings['neryatech'];
+    brandSettings['nerya'] = brandSettings['neryatech'];
+    brandSettings['neria tech'] = brandSettings['neryatech'];
+    brandSettings['neryatec'] = brandSettings['neryatech'];
+    brandSettings['nerya-tech'] = brandSettings['neryatech'];
+    brandSettings['neryatech ar'] = brandSettings['neryatech'];
+    brandSettings['neriatech'] = brandSettings['neryatech'];
+    brandSettings['nerytech'] = brandSettings['neryatech'];
+    brandSettings['neryateck'] = brandSettings['neryatech'];
+    brandSettings['neryatach'] = brandSettings['neryatech'];
+    brandSettings['neryateh'] = brandSettings['neryatech'];
+    brandSettings['nery'] = brandSettings['neryatech'];
+    brandSettings['naryatech'] = brandSettings['neryatech'];
+    brandSettings['neriatech ar'] = brandSettings['neryatech'];
+    brandSettings['neryatech ar viewer'] = brandSettings['neryatech'];
+    brandSettings['neryatech viewer'] = brandSettings['neryatech'];
+    brandSettings['nerya tech viewer'] = brandSettings['neryatech'];
+    brandSettings['nerya viewer'] = brandSettings['neryatech'];
+
+
+    brandSettings['tu doo'] = brandSettings['tudo'];
+    brandSettings['too doo'] = brandSettings['tudo'];
+    brandSettings['tudu'] = brandSettings['tudo'];
+    brandSettings['todo'] = brandSettings['tudo'];
+    brandSettings['tudodesign'] = brandSettings['tudo'];
+    brandSettings['tudo design'] = brandSettings['tudo'];
+    brandSettings['todo dasign'] = brandSettings['tudo'];
+    brandSettings['tuddo'] = brandSettings['tudo'];
+    brandSettings['tutto'] = brandSettings['tudo'];
+    brandSettings['tudos'] = brandSettings['tudo'];
+    brandSettings['tudu design'] = brandSettings['tudo'];
+    brandSettings['todo design'] = brandSettings['tudo'];
+    brandSettings['tudoar'] = brandSettings['tudo'];
+    brandSettings['tudo ar'] = brandSettings['tudo'];
+    brandSettings['tudoviewer'] = brandSettings['tudo'];
+    brandSettings['tudo viewer'] = brandSettings['tudo'];
+    brandSettings['tudodesigns'] = brandSettings['tudo'];
+
 
     // Text translations for main viewer and QR modal
     const translations = {
