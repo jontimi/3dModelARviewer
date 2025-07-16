@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Elements for the brand input landing page
     const brandInput = document.getElementById('brandInput');
     const submitBrandButton = document.getElementById('submitBrandButton');
+    // Get the brand error message element
+    const brandErrorMessage = document.getElementById('brandErrorMessage');
 
     // Get brand from URL
     var brand = getUrlParameter('brand');
@@ -45,9 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var brandSettings = {
         'neryatech': {
             model: 'neryatech_120mm_table_model.glb',
+            // UPDATED DIMENSIONS
             dimensionsText: {
-                en: 'Dimensions: W 120mm x H 80mm x D 10mm',
-                he: 'מידות: רוחב 120 מ"מ X גובה 80 מ"מ X עומק 10 מ"מ'
+                en: 'Dimensions: L 120mm x H 75mm x D 120mm',
+                he: 'מידות: אורך 120 מ"מ X גובה 75 מ"מ X עומק 120 מ"מ'
             },
             viewerBgColor: '#ADD8E6',
             modelViewerAreaBg: '#f5f5f5',
@@ -80,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
             footerText: 'Made by JZS3D | 3D & AR Product Integration',
             qrModalTitle: 'Scan for AR or Share',
             qrModalText: 'Scan the QR code with your phone to view in AR or share the link.',
-            qrModalOpenLink: 'Open Link'
+            qrModalOpenLink: 'Open Link',
+            brandNotFound: 'Brand not found. Please ensure you enter your company\'s full name in English.' 
         },
         he: {
             mainTitle: 'תבנית לצפייה במודל תלת-ממד ו-AR',
@@ -92,11 +96,13 @@ document.addEventListener('DOMContentLoaded', function() {
             footerText: 'נוצר על ידי JZS3D | שילוב מוצרי תלת-ממד ו-AR',
             qrModalTitle: 'סרוק ל-AR או שתף',
             qrModalText: 'סרוק את קוד ה-QR באמצעות הטלפון שלך כדי לצפות ב-AR או לשתף את הקישור.',
-            qrModalOpenLink: 'פתח קישור'
+            qrModalOpenLink: 'פתח קישור',
+            brandNotFound: 'המותג לא נמצא. אנא ודא שהזנת את שם החברה המלא שלך באנגלית.' 
         }
     };
 
     let currentLanguage = 'en'; // Default language
+    let currentSettings = null; // Initialize currentSettings here
 
     // Function to apply translations
     function applyTranslations(lang) {
@@ -107,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (arQrButton) arQrButton.textContent = translations[lang].arQrButton;
         if (shareButton) shareButton.textContent = translations[lang].shareButton;
         if (hebrewButton) hebrewButton.textContent = translations[lang].hebrewButton;
-        if (footerTextElement) footerTextElement.textContent = translations[lang].footerText;
         if (qrModalTitle) qrModalTitle.textContent = translations[lang].qrModalTitle;
         if (qrModalText) qrModalText.textContent = translations[lang].qrModalText;
         if (qrModalOpenLink) qrModalOpenLink.textContent = translations[lang].qrModalOpenLink;
@@ -124,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (mainTitleElement) mainTitleElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
             if (subTextElement) subTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
             if (dimensionsTextElement) dimensionsTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
-            if (footerTextElement) footerTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
         }
 
         // Adjust QR modal direction and text alignment
@@ -146,11 +150,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mainViewerContainer) mainViewerContainer.style.display = 'flex';
         if (brandInputContainer) brandInputContainer.style.display = 'none';
 
-        // Determine current settings based on 'brand' parameter, or use TUDO as default if unrecognized
-        // IMPORTANT: currentSettings is needed for applyTranslations to get dimensionsText
-        var currentSettings = brandSettings[brand] || brandSettings['tudo'];
-        if (!brandSettings[brand]) {
-            console.warn(`Brand "${brand}" not recognized. Defaulting to TUDO settings.`);
+        // Determine current settings based on 'brand' parameter
+        currentSettings = brandSettings[brand]; 
+        
+        // If brand from URL is NOT recognized, show brand input page with error
+        if (!currentSettings) {
+            console.warn(`Brand "${brand}" from URL not recognized. Displaying brand input page.`);
+            if (mainViewerContainer) mainViewerContainer.style.display = 'none';
+            if (brandInputContainer) brandInputContainer.style.display = 'flex';
+            if (brandErrorMessage) {
+                brandErrorMessage.textContent = translations[currentLanguage].brandNotFound;
+                brandErrorMessage.style.display = 'block';
+            }
+            return; 
         }
 
         // Apply dynamic styling using CSS variables
@@ -183,18 +195,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function generateQRCode() {
-            const pageUrl = window.location.href; 
-            if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
+            let urlToEncode = window.location.href;
+            if (brand && !modelFileName) { 
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('brand', brand);
+                urlToEncode = currentUrl.toString();
+            }
+
+            if (urlToEncode && typeof QRious !== 'undefined' && qrCodeImage) {
                 try {
                     new QRious({
                         element: qrCodeImage, 
-                        value: pageUrl,
+                        value: urlToEncode,
                         size: 150, 
                         level: 'H' 
                     });
                     qrCodeImage.style.display = 'block';
-                    qrCodeLink.href = pageUrl;
-                    console.log("QR Code generated for:", pageUrl);
+                    qrCodeLink.href = urlToEncode;
+                    console.log("QR Code generated for:", urlToEncode);
                 } catch (error) {
                     console.error("Error generating QR code:", error);
                     qrCodeImage.style.display = 'none';
@@ -261,18 +279,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
     } else {
-        // If no brand is specified, show the brand input page
+        // If no brand is specified in URL, show the brand input page
         if (mainViewerContainer) mainViewerContainer.style.display = 'none';
-        if (brandInputContainer) brandInputContainer.style.display = 'flex'; // Use flex for centering content
+        if (brandInputContainer) brandInputContainer.style.display = 'flex'; 
+
+        // Ensure brandErrorMessage is hidden initially on the landing page
+        if (brandErrorMessage) {
+            brandErrorMessage.style.display = 'none';
+        }
 
         if (submitBrandButton && brandInput) {
             submitBrandButton.addEventListener('click', () => {
                 const enteredBrand = brandInput.value.trim().toLowerCase();
+                
                 if (enteredBrand) {
-                    // Redirect to the page with the brand parameter
-                    window.location.href = window.location.origin + window.location.pathname + '?brand=' + enteredBrand;
+                    if (brandSettings[enteredBrand]) {
+                        window.location.href = window.location.origin + window.location.pathname + '?brand=' + enteredBrand;
+                    } else {
+                        if (brandErrorMessage) {
+                            brandErrorMessage.textContent = translations[currentLanguage].brandNotFound;
+                            brandErrorMessage.style.display = 'block';
+                        }
+                        console.warn(`Entered brand "${enteredBrand}" not found. Displaying error.`);
+                    }
                 } else {
-                    alert('Please enter a brand name.');
+                    if (brandErrorMessage) {
+                        brandErrorMessage.textContent = 'Please enter a brand name.';
+                        brandErrorMessage.style.display = 'block';
+                    }
+                    console.log('Brand input empty.');
                 }
             });
 
@@ -280,6 +315,14 @@ document.addEventListener('DOMContentLoaded', function() {
             brandInput.addEventListener('keypress', (event) => {
                 if (event.key === 'Enter') {
                     submitBrandButton.click();
+                }
+            });
+
+            // Clear error message when user starts typing again
+            brandInput.addEventListener('input', () => {
+                if (brandErrorMessage) {
+                    brandErrorMessage.style.display = 'none';
+                    brandErrorMessage.textContent = ''; 
                 }
             });
         }
