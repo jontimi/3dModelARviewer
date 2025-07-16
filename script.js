@@ -8,59 +8,241 @@ function getUrlParameter(name) {
 
 document.addEventListener('DOMContentLoaded', function() {
     var modelViewer = document.getElementById('modelViewer');
-    var viewerHeader = document.getElementById('viewerHeader');
+    var dimensionsTextElement = document.getElementById('dimensionsText');
+    var mainTitleElement = document.querySelector('.main-viewer-container h1');
+    var subTextElement = document.querySelector('.main-viewer-container p:nth-of-type(1)');
+    var footerTextElement = document.querySelector('.footer-text');
+    var mainViewerContainer = document.getElementById('mainViewerContainer'); // Get the main container
 
-    if (modelViewer && viewerHeader) {
-        var brand = getUrlParameter('brand');
-        var modelFileName = getUrlParameter('model'); // Allows specific model to be passed
+    // Buttons
+    const resetButton = document.getElementById("reset-view-button");
+    const arQrButton = document.getElementById("ar-qr-button");
+    const shareButton = document.getElementById("share-button");
+    const hebrewButton = document.getElementById("hebrew-button");
 
-        // Brand-specific settings for design (colors, header text, default model)
-        var brandSettings = {
-            'neryatech': {
-                model: 'neryatech_120mm_table_model.glb', // Your Neryatech model
-                viewerBgColor: '#ADD8E6', // Light blue for body background (from NeryaTech image)
-                modelViewerAreaBg: '#f5f5f5', // Lighter background inside model-viewer area
-                headerBgColor: '#cceeff', // Slightly different header background for Neryatech
-                headerTextColor: '#000000', // Black header text
-                headerText: 'NERYATECH AR Experience' // Neryatech specific header
+    // QR Modal elements
+    const qrModal = document.getElementById("qr-modal");       
+    const closeQrModal = document.getElementById("close-qr-modal"); 
+    const qrCodeLink = document.getElementById("qr-code-link");
+    const qrCodeImage = document.getElementById("qr-code-image");
+    const qrModalTitle = document.querySelector('#qr-modal h2');
+    const qrModalText = document.querySelector('#qr-modal p');
+    const qrModalOpenLink = document.querySelector('#qr-modal a');
+
+    if (!modelViewer || !dimensionsTextElement || !mainTitleElement || !subTextElement || !footerTextElement || !mainViewerContainer) {
+        console.error("One or more core elements not found. Translation may not work fully.");
+    }
+
+    var brand = getUrlParameter('brand');
+    var modelFileName = getUrlParameter('model');
+
+    var brandSettings = {
+        'neryatech': {
+            model: 'neryatech_120mm_table_model.glb',
+            dimensionsText: {
+                en: 'Dimensions: W 120mm x H 80mm x D 10mm',
+                he: 'מידות: רוחב 120 מ"מ X גובה 80 מ"מ X עומק 10 מ"מ'
             },
-            'tudo': {
-                model: 'HiveShelf90cm.glb', // Your TUDO model
-                viewerBgColor: '#F0F0F0', // Light grey for outer body background
-                modelViewerAreaBg: '#ffffff', // White background inside model-viewer area (from TUDO image)
-                headerBgColor: '#e0e0e0', // Light grey header background (as seen in TUDO image)
-                headerTextColor: '#555555', // Dark grey text color for header
-                headerText: 'TUDO Design AR Experience' // Specific header text for TUDO
+            viewerBgColor: '#ADD8E6',
+            modelViewerAreaBg: '#f5f5f5',
+            buttonBgColor: '#007bff',
+            buttonHoverColor: '#0056b3'
+        },
+        'tudo': {
+            model: 'HiveShelf90cm.glb',
+            dimensionsText: {
+                en: 'Dimensions: W 90cm x H 160cm x D 20cm',
+                he: 'מידות: רוחב 90 ס"מ X גובה 160 ס"מ X עומק 20 ס"מ'
+            },
+            viewerBgColor: '#f0f0f0',
+            modelViewerAreaBg: '#ffffff',
+            buttonBgColor: '#4CAF50',
+            buttonHoverColor: '#45a049'
+        }
+    };
+
+    const translations = {
+        en: {
+            mainTitle: 'Simple 3D AR Model Viewer Template',
+            subText: 'This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function.',
+            resetButton: 'Reset 3D View',
+            arQrButton: 'AR QR',
+            shareButton: 'Share',
+            hebrewButton: 'עברית',
+            footerText: 'Made by JZS3D | 3D & AR Product Integration',
+            qrModalTitle: 'Scan for AR or Share',
+            qrModalText: 'Scan the QR code with your phone to view in AR or share the link.',
+            qrModalOpenLink: 'Open Link'
+        },
+        he: {
+            mainTitle: 'תבנית לצפייה במודל תלת-ממד ו-AR',
+            subText: 'דף זה מדגים צופה מודל תלת-ממד ו-AR יחיד וניתן להטמעה. הוא מציג כיצד ייראה ויתפקד חלון הצפייה התלת-ממדי הקופץ.',
+            resetButton: 'איפוס תצוגת תלת-ממד',
+            arQrButton: 'קוד QR ל-AR',
+            shareButton: 'שיתוף',
+            hebrewButton: 'English',
+            footerText: 'נוצר על ידי JZS3D | שילוב מוצרי תלת-ממד ו-AR',
+            qrModalTitle: 'סרוק ל-AR או שתף',
+            qrModalText: 'סרוק את קוד ה-QR באמצעות הטלפון שלך כדי לצפות ב-AR או לשתף את הקישור.',
+            qrModalOpenLink: 'פתח קישור'
+        }
+    };
+
+    let currentLanguage = 'en';
+
+    var currentSettings = brandSettings[brand] || brandSettings['tudo'];
+
+    function applyTranslations(lang) {
+        // Apply text content
+        if (mainTitleElement) mainTitleElement.textContent = translations[lang].mainTitle;
+        if (subTextElement) subTextElement.textContent = translations[lang].subText;
+        if (resetButton) resetButton.textContent = translations[lang].resetButton;
+        if (arQrButton) arQrButton.textContent = translations[lang].arQrButton;
+        if (shareButton) shareButton.textContent = translations[lang].shareButton;
+        if (hebrewButton) hebrewButton.textContent = translations[lang].hebrewButton;
+        if (footerTextElement) footerTextElement.textContent = translations[lang].footerText;
+        if (qrModalTitle) qrModalTitle.textContent = translations[lang].qrModalTitle;
+        if (qrModalText) qrModalText.textContent = translations[lang].qrModalText;
+        if (qrModalOpenLink) qrModalOpenLink.textContent = translations[lang].qrModalOpenLink;
+        
+        if (dimensionsTextElement && currentSettings.dimensionsText) {
+            dimensionsTextElement.textContent = currentSettings.dimensionsText[lang];
+        }
+
+        // Apply RTL/LTR direction to the main container
+        if (mainViewerContainer) {
+            mainViewerContainer.style.direction = (lang === 'he') ? 'rtl' : 'ltr';
+            
+            // Adjust text alignment for text elements within the main container
+            // (These should generally align with the container's direction)
+            if (mainTitleElement) mainTitleElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
+            if (subTextElement) subTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
+            if (dimensionsTextElement) dimensionsTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
+            if (footerTextElement) footerTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
+            
+            // Ensure buttons within controls-below-viewer are not affected by text-align if not desired
+            // The flexbox 'justify-content: center' on controls-below-viewer will keep them centered.
+            // If individual button text needs to be RTL, it will happen naturally due to direction:rtl
+        }
+
+        // Adjust QR modal direction and text alignment
+        if (qrModalTitle) qrModalTitle.style.textAlign = (lang === 'he') ? 'right' : 'center';
+        if (qrModalText) qrModalText.style.textAlign = (lang === 'he') ? 'right' : 'center';
+        if (qrModalOpenLink) qrModalOpenLink.style.textAlign = (lang === 'he') ? 'right' : 'center'; // Or left for link
+        if (qrModal) qrModal.querySelector('.modal-content').style.direction = (lang === 'he') ? 'rtl' : 'ltr';
+
+
+        // Crucially, prevent modelViewer and its immediate container from inheriting RTL
+        // We set direction: ltr explicitly for the model viewer container.
+        // This ensures the model and its controls behave consistently regardless of page language.
+        const product3dViewerContainer = document.querySelector('.product-3d-viewer-container');
+        if (product3dViewerContainer) {
+            product3dViewerContainer.style.direction = 'ltr';
+        }
+    }
+
+    // Initial load: Apply current settings and default English translations
+    document.body.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
+    modelViewer.style.setProperty('--model-viewer-bg', currentSettings.modelViewerAreaBg);
+    
+    document.querySelectorAll('.action-button').forEach(button => {
+        button.style.setProperty('--button-bg-color', currentSettings.buttonBgColor);
+        button.style.setProperty('--button-hover-color', currentSettings.buttonHoverColor);
+        button.style.backgroundColor = currentSettings.buttonBgColor;
+        button.onmouseover = () => button.style.backgroundColor = currentSettings.buttonHoverColor;
+        button.onmouseout = () => button.style.backgroundColor = currentSettings.buttonBgColor;
+    });
+
+    modelViewer.src = 'models/' + (modelFileName || currentSettings.model); 
+    modelViewer.alt = "3D model of " + modelViewer.src.replace('models/', '').replace('.glb', '').replace('.usdz', '');
+    console.log('Loading model for ' + (brand || 'default') + ': ' + modelViewer.src);
+
+    applyTranslations('en'); // Initial English translation
+
+    // --- Button Event Listeners ---
+    if (resetButton) {
+        resetButton.addEventListener("click", () => {
+            modelViewer.cameraOrbit = "0deg 75deg auto"; 
+            modelViewer.fieldOfView = "45deg"; 
+            console.log("3D View Reset.");
+        });
+    }
+
+    function generateQRCode() {
+        const pageUrl = window.location.href; 
+        if (pageUrl && typeof QRious !== 'undefined' && qrCodeImage) {
+            try {
+                new QRious({
+                    element: qrCodeImage, 
+                    value: pageUrl,
+                    size: 150, 
+                    level: 'H' 
+                });
+                qrCodeImage.style.display = 'block';
+                qrCodeLink.href = pageUrl;
+                console.log("QR Code generated for:", pageUrl);
+            } catch (error) {
+                console.error("Error generating QR code:", error);
+                qrCodeImage.style.display = 'none';
             }
-            // Add more brands here in the future if needed
-        };
+        } else {
+            console.warn("QRious library or QR code elements not found, or page URL is missing.");
+        }
+    }
 
-        // Determine current settings based on 'brand' parameter, or use defaults
-        var currentSettings = brandSettings[brand] || {
-            // Default settings if no 'brand' parameter or it's unrecognized
-            model: 'HiveShelf90cm.glb', // Default to HiveShelf
-            viewerBgColor: '#f0f0f0', // Default light grey for outer body background
-            modelViewerAreaBg: '#ffffff', // Default white for model area
-            headerBgColor: '#e0e0e0', // Default header background
-            headerTextColor: '#333333', // Default header text color
-            headerText: '3D/AR Viewer' // Default generic header
-        };
+    if (arQrButton) {
+        arQrButton.addEventListener("click", () => {
+            generateQRCode(); 
+            qrModal.style.display = "flex"; 
+            console.log("AR / QR Code button clicked. Modal shown.");
+        });
+    }
 
-        // Apply dynamic styling using CSS variables (defined in index.html's <style> block)
-        document.body.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
-        document.body.style.setProperty('--viewer-text-color', currentSettings.headerTextColor); 
-        modelViewer.style.setProperty('--model-viewer-bg', currentSettings.modelViewerAreaBg);
-        document.documentElement.style.setProperty('--header-bg-color', currentSettings.headerBgColor);
-        document.documentElement.style.setProperty('--header-text-color', currentSettings.headerTextColor);
+    if (closeQrModal) {
+        closeQrModal.addEventListener("click", () => {
+            qrModal.style.display = "none";
+            console.log("QR Modal closed.");
+        });
+    }
 
-        viewerHeader.textContent = currentSettings.headerText;
+    window.addEventListener("click", (event) => {
+        if (event.target == qrModal) {
+            qrModal.style.display = "none";
+            console.log("QR Modal closed by outside click.");
+        }
+    });
 
-        // Load the model: specific model from URL (if provided) or brand's default
-        modelViewer.src = 'models/' + (modelFileName || currentSettings.model); 
-        modelViewer.alt = "3D model of " + modelViewer.src.replace('models/', '').replace('.glb', '').replace('.usdz', '');
-        console.log('Loading model for ' + (brand || 'default') + ': ' + modelViewer.src + ' with header: ' + currentSettings.headerText);
+    if (shareButton) {
+        shareButton.addEventListener("click", async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: document.title,
+                        url: window.location.href
+                    });
+                    console.log('Page shared successfully');
+                } catch (error) {
+                    console.error('Error sharing the page:', error);
+                }
+            } else {
+                console.warn('Web Share API not supported. Providing fallback.');
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    alert("Share feature not supported. The link has been copied to your clipboard!");
+                    console.log('Link copied to clipboard as fallback.');
+                } catch (err) {
+                    alert("Share feature not supported. You can manually copy the link: " + window.location.href);
+                    console.error('Failed to copy link to clipboard:', err);
+                }
+            }
+        });
+    }
 
-    } else {
-        console.error("Model Viewer or Header element not found in 3dModelARviewer/index.html.");
+    if (hebrewButton) {
+        hebrewButton.addEventListener("click", () => {
+            currentLanguage = (currentLanguage === 'en') ? 'he' : 'en';
+            applyTranslations(currentLanguage);
+            console.log("Language toggled to: " + currentLanguage);
+        });
     }
 });
