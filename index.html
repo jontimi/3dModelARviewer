@@ -118,6 +118,19 @@
             color: #333;
         }
 
+        /* Styling for the 3D brand logo (model-viewer) */
+        #brandLogo3D {
+            width: 150px; /* Adjust width as needed for your logo */
+            height: 150px; /* Adjust height as needed for your logo */
+            margin-bottom: 25px; /* Space between logo and title */
+            background-color: transparent; /* Ensure model-viewer has transparent background */
+            --environment-image: none; /* No default environment image */
+            --skybox-image: none; /* No default skybox */
+            --interpolation-decay: 0; /* No camera animation */
+            --progress-bar-color: #007bff; /* Optional: style progress bar */
+            box-shadow: none; /* Remove any default model-viewer shadow */
+        }
+
         .brand-input-container h1 {
             font-size: 2.2em;
             color: #2a2a2a;
@@ -162,6 +175,15 @@
 
         .brand-input-wrapper button:hover {
             background-color: #0056b3;
+        }
+
+        /* Styling for the error message */
+        #brandErrorMessage {
+            color: #d9534f; /* Red color for error */
+            margin-top: 10px;
+            font-size: 0.95em;
+            font-weight: bold;
+            text-align: center;
         }
 
         /* Modal styles for QR code */
@@ -252,18 +274,41 @@
                 padding: 10px 20px;
                 font-size: 1em;
             }
+            #brandLogo3D {
+                width: 120px; /* Smaller logo on small screens */
+                height: 120px;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="brandInputContainer" class="brand-input-container" style="display: none;">
+        <model-viewer id="brandLogo3D"
+                      src="models/jzs3d_logo_black.glb"
+                      alt="JZS3D 3D Logo"
+                      camera-controls="false"
+                      auto-rotate
+                      rotation-per-second="10deg"
+                      shadow-intensity="1"
+                      exposure="1.2"
+                      environment-image="neutral"
+                      disable-zoom
+                      disable-pan
+                      interaction-prompt="none"
+                      touch-action="none">
+        </model-viewer>
+
         <h1>Welcome to the 3D AR Model Viewer</h1>
         <p>Please enter your brand name to view your specific 3D product catalog and AR experience.</p>
         <div class="brand-input-wrapper">
-            <input type="text" id="brandInput" placeholder="e.g., tudo, neryatech">
+            <input type="text" id="brandInput" placeholder="Enter your brand name">
             <button id="submitBrandButton">Go to Brand Page</button>
         </div>
-        <p style="margin-top: 30px; font-size: 0.85em; color: #888;">(If you were provided a direct link, it might already include the brand.)</p>
+        <p id="brandErrorMessage" style="color: red; margin-top: 10px; display: none;"></p>
+        <p style="margin-top: 30px; font-size: 0.85em; color: #888;">
+            You are not meant to be here directly. To reach your destination, please enter your company's name in English above.
+        </p>
     </div>
 
     <div id="mainViewerContainer" class="main-viewer-container" style="display: none;">
@@ -294,7 +339,7 @@
             <button id="hebrew-button" class="action-button">עברית</button>
         </div>
 
-        <div class="footer-text">Made by JZS3D | 3D & AR Product Integration</div>
+        <div class="footer-text">Made by <a href="https://jzs3d.com" target="_blank" style="color: #777; text-decoration: none;">JZS3D</a> | 3D & AR Product Integration</div>
     </div>
 
     <div id="qr-modal" class="modal">
