@@ -1,9 +1,25 @@
-// Function to get URL parameters
+// Function to get URL parameters - MODIFIED to primarily check location.hash for 'brand'
 function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    name = name.replace(/[\\[]/, '\\[').replace(/[\\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    
+    // First, try to get from query parameters
     var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    if (results !== null) {
+        return decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // If not found in query, try to get from hash parameters for 'brand'
+    // This is for robustness when loaded in an iframe or with hash-based routing
+    if (name === 'brand') { // Only check hash for 'brand' if that's what's requested
+        var hashRegex = new RegExp('[#&]' + name + '=([^&]*)');
+        var hashResults = hashRegex.exec(location.hash);
+        if (hashResults !== null) {
+            return decodeURIComponent(hashResults[1].replace(/\+/g, ' '));
+        }
+    }
+
+    return ''; // Return empty string if parameter not found in either
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -29,31 +45,110 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeQrModal = document.getElementById("close-qr-modal"); 
     const qrCodeLink = document.getElementById("qr-code-link");
     const qrCodeImage = document.getElementById("qr-code-image");
-    const qrModalTitle = document.querySelector('#qr-modal h2');
-    const qrModalText = document.querySelector('#qr-modal p');
-    const qrModalOpenLink = document.querySelector('#qr-modal a');
+    
+    // Brand Input Page elements
+    var brandInput = document.getElementById('brandInput');
+    var submitBrandButton = document.getElementById('submitBrandButton');
+    var brandErrorMessage = document.getElementById('brandErrorMessage');
 
-    // Elements for the brand input landing page
-    const brandInput = document.getElementById('brandInput');
-    const submitBrandButton = document.getElementById('submitBrandButton');
-    // Get the brand error message element
-    const brandErrorMessage = document.getElementById('brandErrorMessage');
+    // Language buttons for the brand input page
+    var englishBrandButton = document.getElementById('englishBrandButton');
+    var hebrewBrandButton = document.getElementById('hebrewBrandButton');
 
-    // Get brand from URL
+    // Translations object (same as your original)
+    var translations = {
+        en: {
+            mainTitle: 'Your 3D Product Viewer',
+            subText: 'Experience your products in 3D and Augmented Reality.',
+            enterBrand: 'Enter your brand name:',
+            goToBrand: 'Go to Brand Page',
+            brandNotFound: 'Brand not found. Please try again or check the URL.',
+            resetView: 'Reset 3D View',
+            arQr: 'AR QR',
+            share: 'Share',
+            hebrew: 'עברית',
+            scanForArShare: 'Scan for AR or Share',
+            openLink: 'Open Link',
+            footerText: 'Made by JZS3D | 3D & AR Product Integration'
+        },
+        he: {
+            mainTitle: 'מציג המוצרים בתלת מימד שלך',
+            subText: 'חווה את המוצרים שלך בתלת מימד ובמציאות רבודה.',
+            enterBrand: 'הכנס שם מותג:',
+            goToBrand: 'עבור לדף המותג',
+            brandNotFound: 'המותג לא נמצא. אנא נסה שוב או בדוק את הכתובת.',
+            resetView: 'איפוס תצוגה בתלת מימד',
+            arQr: 'QR למציאות רבודה',
+            share: 'שתף',
+            hebrew: 'English', // Hebrew button toggles to English
+            scanForArShare: 'סרוק למציאות רבודה או שתף',
+            openLink: 'פתח קישור',
+            footerText: 'נוצר על ידי JZS3D | שילוב מוצרי תלת מימד ומציאות רבודה'
+        }
+    };
+
+    // Current language (default to English)
+    var currentLanguage = 'en';
+
+    // Function to apply translations
+    function applyTranslations() {
+        if (mainTitleElement) mainTitleElement.textContent = translations[currentLanguage].mainTitle;
+        if (subTextElement) subTextElement.textContent = translations[currentLanguage].subText;
+        if (brandInput) brandInput.placeholder = translations[currentLanguage].enterBrand;
+        if (submitBrandButton) submitBrandButton.textContent = translations[currentLanguage].goToBrand;
+        if (resetButton) resetButton.textContent = translations[currentLanguage].resetView;
+        if (arQrButton) arQrButton.textContent = translations[currentLanguage].arQr;
+        if (shareButton) shareButton.textContent = translations[currentLanguage].share;
+        if (hebrewButton) hebrewButton.textContent = translations[currentLanguage].hebrew;
+        // Update QR modal translations
+        const qrModalTitle = qrModal.querySelector('h2');
+        if (qrModalTitle) qrModalTitle.textContent = translations[currentLanguage].scanForArShare;
+        if (qrCodeLink) qrCodeLink.textContent = translations[currentLanguage].openLink;
+        if (footerTextElement) footerTextElement.innerHTML = `Made by <a href="https://jzs3d.framer.ai/" target="_blank" style="color: #777; text-decoration: none;">JZS3D</a> | ${translations[currentLanguage].footerText}`;
+    }
+
+    // Language button event listeners
+    if (englishBrandButton) {
+        englishBrandButton.addEventListener('click', () => {
+            currentLanguage = 'en';
+            applyTranslations();
+            // Store preference in localStorage if desired
+            localStorage.setItem('preferredLanguage', 'en');
+        });
+    }
+    if (hebrewBrandButton) {
+        hebrewBrandButton.addEventListener('click', () => {
+            currentLanguage = 'he';
+            applyTranslations();
+            // Store preference in localStorage if desired
+            localStorage.setItem('preferredLanguage', 'he');
+        });
+    }
+
+    // Load preferred language from localStorage on startup
+    const storedLanguage = localStorage.getItem('preferredLanguage');
+    if (storedLanguage && translations[storedLanguage]) {
+        currentLanguage = storedLanguage;
+    }
+    applyTranslations(); // Apply initial translations
+
+
+    // Get brand from URL (now uses modified getUrlParameter)
     var brand = getUrlParameter('brand');
-    var modelFileName = getUrlParameter('model');
+    var modelFileName = getUrlParameter('model'); // Still checks query for 'model'
+
 
     // Define brand specific settings
     var brandSettings = {
         'neryatech': {
-            model: 'neryatech_120mm_table_model.glb',
+            model: 'Neryatech.glb',
             dimensionsText: {
-                en: 'Dimensions: L 120mm x H 75mm x D 120mm',
-                he: 'מידות: אורך 120 מ"מ X גובה 75 מ"מ X עומק 120 מ"מ'
+                en: 'Dimensions: W 160cm x H 160cm x D 160cm',
+                he: 'מידות: רוחב 160 ס"מ X גובה 160 ס"מ X עומק 160 ס"מ'
             },
-            viewerBgColor: '#ADD8E6',
-            modelViewerAreaBg: '#f5f5f5',
-            buttonBgColor: '#007bff',
+            viewerBgColor: '#f0f0f0', // Light grey for the viewer background
+            modelViewerAreaBg: '#ffffff', // White background inside the model-viewer canvas
+            buttonBgColor: '#007bff', // Example blue
             buttonHoverColor: '#0056b3'
         },
         'tudo': {
@@ -64,174 +159,41 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             viewerBgColor: '#f0f0f0',
             modelViewerAreaBg: '#ffffff',
+            buttonBgColor: '#4CAF50', // Green color like site logo
+            buttonHoverColor: '#45a049'
+        },
+        'tudo small': {
+            model: 'HiveShelfSmall.glb',
+            dimensionsText: {
+                en: 'Dimensions: W 50cm x H 80cm x D 15cm',
+                he: 'מידות: רוחב 50 ס"מ X גובה 80 ס"מ X עומק 15 ס"מ'
+            },
+            viewerBgColor: '#f0f0f0',
+            modelViewerAreaBg: '#ffffff',
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
         },
-        // --- UPDATED: Brand Name Variations ---
-        // NeryaTech Variations
-        'nerya tech': null,
-        'nerya': null,
-        'neria tech': null,
-        'neryatec': null,
-        'nerya-tech': null,
-        'neryatech ar': null,
-        'neriatech': null,
-        'nerytech': null,
-        'neryateck': null,   // Added
-        'neryatach': null,   // Added
-        'neryateh': null,    // Added
-        'nery': null,        // Added
-        'naryatech': null,   // Added
-        'neriatech ar': null, // Added
-        'neryatech ar viewer': null, // Added
-        'neryatech viewer': null, // Added
-        'nerya tech viewer': null, // Added
-        'nerya viewer': null, // Added
-        // Tudo Variations
-        'tu doo': null,
-        'too doo': null,
-        'tudu': null,
-        'todo': null,
-        'tudodesign': null,
-        'tudo design': null,
-        'todo dasign': null,
-        'tuddo': null,       // Added
-        'tutto': null,       // Added
-        'tudos': null,       // Added
-        'tudu design': null, // Added
-        'todo design': null,  // Added
-        'tudoar': null,      // Added
-        'tudo ar': null,     // Added
-        'tudoviewer': null,  // Added
-        'tudo viewer': null, // Added
-        'tudodesigns': null  // Added
-        // Add more brands here in the future if needed
-    };
-
-    // --- UPDATED: Map variations to their actual brand objects ---
-    // This must be done AFTER brandSettings is fully defined
-    brandSettings['nerya tech'] = brandSettings['neryatech'];
-    brandSettings['nerya'] = brandSettings['neryatech'];
-    brandSettings['neria tech'] = brandSettings['neryatech'];
-    brandSettings['neryatec'] = brandSettings['neryatech'];
-    brandSettings['nerya-tech'] = brandSettings['neryatech'];
-    brandSettings['neryatech ar'] = brandSettings['neryatech'];
-    brandSettings['neriatech'] = brandSettings['neryatech'];
-    brandSettings['nerytech'] = brandSettings['neryatech'];
-    brandSettings['neryateck'] = brandSettings['neryatech'];
-    brandSettings['neryatach'] = brandSettings['neryatech'];
-    brandSettings['neryateh'] = brandSettings['neryatech'];
-    brandSettings['nery'] = brandSettings['neryatech'];
-    brandSettings['naryatech'] = brandSettings['neryatech'];
-    brandSettings['neriatech ar'] = brandSettings['neryatech'];
-    brandSettings['neryatech ar viewer'] = brandSettings['neryatech'];
-    brandSettings['neryatech viewer'] = brandSettings['neryatech'];
-    brandSettings['nerya tech viewer'] = brandSettings['neryatech'];
-    brandSettings['nerya viewer'] = brandSettings['neryatech'];
-
-
-    brandSettings['tu doo'] = brandSettings['tudo'];
-    brandSettings['too doo'] = brandSettings['tudo'];
-    brandSettings['tudu'] = brandSettings['tudo'];
-    brandSettings['todo'] = brandSettings['tudo'];
-    brandSettings['tudodesign'] = brandSettings['tudo'];
-    brandSettings['tudo design'] = brandSettings['tudo'];
-    brandSettings['todo dasign'] = brandSettings['tudo'];
-    brandSettings['tuddo'] = brandSettings['tudo'];
-    brandSettings['tutto'] = brandSettings['tudo'];
-    brandSettings['tudos'] = brandSettings['tudo'];
-    brandSettings['tudu design'] = brandSettings['tudo'];
-    brandSettings['todo design'] = brandSettings['tudo'];
-    brandSettings['tudoar'] = brandSettings['tudo'];
-    brandSettings['tudo ar'] = brandSettings['tudo'];
-    brandSettings['tudoviewer'] = brandSettings['tudo'];
-    brandSettings['tudo viewer'] = brandSettings['tudo'];
-    brandSettings['tudodesigns'] = brandSettings['tudo'];
-
-
-    // Text translations for main viewer and QR modal
-    const translations = {
-        en: {
-            mainTitle: 'Simple 3D AR Model Viewer Template',
-            subText: 'This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function.',
-            resetButton: 'Reset 3D View',
-            arQrButton: 'AR QR',
-            shareButton: 'Share',
-            hebrewButton: 'עברית',
-            footerText: 'Made by JZS3D | 3D & AR Product Integration',
-            qrModalTitle: 'Scan for AR or Share',
-            qrModalText: 'Scan the QR code with your phone to view in AR or share the link.',
-            qrModalOpenLink: 'Open Link',
-            brandNotFound: 'Brand not found. Please ensure you enter your company\'s full name in English.' 
+        'tudo big': {
+            model: 'HiveShelfBig.glb',
+            dimensionsText: {
+                en: 'Dimensions: W 120cm x H 200cm x D 25cm',
+                he: 'מידות: רוחב 120 ס"מ X גובה 200 ס"מ X עומק 25 ס"מ'
+            },
+            viewerBgColor: '#f0f0f0',
+            modelViewerAreaBg: '#ffffff',
+            buttonBgColor: '#4CAF50',
+            buttonHoverColor: '#45a049'
         },
-        he: {
-            mainTitle: 'תבנית לצפייה במודל תלת-ממד ו-AR',
-            subText: 'דף זה מדגים צופה מודל תלת-ממד ו-AR יחיד וניתן להטמעה. הוא מציג כיצד ייראה ויתפקד חלון הצפייה התלת-ממדי הקופץ.',
-            resetButton: 'איפוס תצוגת תלת-ממד',
-            arQrButton: 'קוד QR ל-AR',
-            shareButton: 'שיתוף',
-            hebrewButton: 'English',
-            footerText: 'נוצר על ידי JZS3D | שילוב מוצרי תלת-ממד ו-AR',
-            qrModalTitle: 'סרוק ל-AR או שתף',
-            qrModalText: 'סרוק את קוד ה-QR באמצעות הטלפון שלך כדי לצפות ב-AR או לשתף את הקישור.',
-            qrModalOpenLink: 'פתח קישור',
-            brandNotFound: 'המותג לא נמצא. אנא ודא שהזנת את שם החברה המלא שלך באנגלית.' 
-        }
+        // Variations for 'tudo' (case-insensitive and with common misspellings)
+        'tu do': { model: 'HiveShelf90cm.glb', dimensionsText: { en: 'Dimensions: W 90cm x H 160cm x D 20cm', he: 'מידות: רוחב 90 ס"מ X גובה 160 ס"מ X עומק 20 ס"מ' } },
+        'tudu': { model: 'HiveShelf90cm.glb', dimensionsText: { en: 'Dimensions: W 90cm x H 160cm x D 20cm', he: 'מידות: רוחב 90 ס"מ X גובה 160 ס"מ X עומק 20 ס"מ' } },
+        'tu doo': { model: 'HiveShelf90cm.glb', dimensionsText: { en: 'Dimensions: W 90cm x H 160cm x D 20cm', he: 'מידות: רוחב 90 ס"מ X גובה 160 ס"מ X עומק 20 ס"מ' } }
     };
-
-    let currentLanguage = 'en'; // Default language
-    let currentSettings = null; // Initialize currentSettings here
-
-    // Function to apply translations
-    function applyTranslations(lang) {
-        // Apply text content
-        if (mainTitleElement) mainTitleElement.textContent = translations[lang].mainTitle;
-        if (subTextElement) subTextElement.textContent = translations[lang].subText;
-        if (resetButton) resetButton.textContent = translations[lang].resetButton;
-        if (arQrButton) arQrButton.textContent = translations[lang].arQrButton;
-        if (shareButton) shareButton.textContent = translations[lang].shareButton;
-        if (hebrewButton) hebrewButton.textContent = translations[lang].hebrewButton;
-        if (qrModalTitle) qrModalTitle.textContent = translations[lang].qrModalTitle;
-        if (qrModalText) qrModalText.textContent = translations[lang].qrModalText;
-        if (qrModalOpenLink) qrModalOpenLink.textContent = translations[lang].qrModalOpenLink;
-        
-        if (dimensionsTextElement && currentSettings && currentSettings.dimensionsText) {
-            dimensionsTextElement.textContent = currentSettings.dimensionsText[lang];
-        }
-
-        // Apply RTL/LTR direction to the main container
-        if (mainViewerContainer) {
-            mainViewerContainer.style.direction = (lang === 'he') ? 'rtl' : 'ltr';
-            
-            // Adjust text alignment for text elements within the main container
-            if (mainTitleElement) mainTitleElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
-            if (subTextElement) subTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
-            if (dimensionsTextElement) dimensionsTextElement.style.textAlign = (lang === 'he') ? 'right' : 'center';
-        }
-
-        // Adjust QR modal direction and text alignment
-        if (qrModalTitle) qrModalTitle.style.textAlign = (lang === 'he') ? 'right' : 'center';
-        if (qrModalText) qrModalText.style.textAlign = (lang === 'he') ? 'right' : 'center';
-        if (qrModalOpenLink) qrModalOpenLink.style.textAlign = (lang === 'he') ? 'right' : 'center';
-        if (qrModal) qrModal.querySelector('.modal-content').style.direction = (lang === 'he') ? 'rtl' : 'ltr';
-
-        // Crucially, prevent modelViewer and its immediate container from inheriting RTL
-        const product3dViewerContainer = document.querySelector('.product-3d-viewer-container');
-        if (product3dViewerContainer) {
-            product3dViewerContainer.style.direction = 'ltr';
-        }
-    }
 
     // --- Initial Page Load Logic ---
-    if (brand) {
-        // If brand is specified, show the main viewer and hide the input page
-        if (mainViewerContainer) mainViewerContainer.style.display = 'flex';
-        if (brandInputContainer) brandInputContainer.style.display = 'none';
+    if (brand) { // If brand is specified in the URL (now checking hash too)
+        var currentSettings = brandSettings[brand];
 
-        // Determine current settings based on 'brand' parameter
-        currentSettings = brandSettings[brand]; 
-        
-        // If brand from URL is NOT recognized, show brand input page with error
         if (!currentSettings) {
             console.warn(`Brand "${brand}" from URL not recognized. Displaying brand input page.`);
             if (mainViewerContainer) mainViewerContainer.style.display = 'none';
@@ -240,139 +202,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 brandErrorMessage.textContent = translations[currentLanguage].brandNotFound;
                 brandErrorMessage.style.display = 'block';
             }
-            return; 
+            return; // EXIT HERE IF BRAND NOT RECOGNIZED
         }
 
-        // Apply dynamic styling using CSS variables
-        document.body.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
-        modelViewer.style.setProperty('--model-viewer-bg', currentSettings.modelViewerAreaBg);
-        
-        document.querySelectorAll('.action-button').forEach(button => {
-            button.style.setProperty('--button-bg-color', currentSettings.buttonBgColor);
-            button.style.setProperty('--button-hover-color', currentSettings.buttonHoverColor);
+        // Apply brand settings
+        modelViewer.src = currentSettings.model;
+        if (dimensionsTextElement) dimensionsTextElement.textContent = currentSettings.dimensionsText[currentLanguage];
+        document.documentElement.style.setProperty('--viewer-bg-color', currentSettings.viewerBgColor);
+        modelViewer.style.setProperty('--model-viewer-area-bg', currentSettings.modelViewerAreaBg);
+
+        // Apply button colors
+        const actionButtons = document.querySelectorAll('.action-button');
+        actionButtons.forEach(button => {
             button.style.backgroundColor = currentSettings.buttonBgColor;
-            button.onmouseover = () => button.style.backgroundColor = currentSettings.buttonHoverColor;
-            button.onmouseout = () => button.style.backgroundColor = currentSettings.buttonBgColor;
+            // Add hover effect dynamically
+            button.addEventListener('mouseover', () => {
+                button.style.backgroundColor = currentSettings.buttonHoverColor;
+            });
+            button.addEventListener('mouseout', () => {
+                button.style.backgroundColor = currentSettings.buttonBgColor;
+            });
         });
 
-        // Load the model: specific model from URL (if provided) or brand's default
-        modelViewer.src = 'models/' + (modelFileName || currentSettings.model); 
-        modelViewer.alt = "3D model of " + modelViewer.src.replace('models/', '').replace('.glb', '').replace('.usdz', '');
-        console.log('Loading model for ' + (brand || 'default') + ': ' + modelViewer.src);
 
-        // Apply initial English translation (this will also set dimensions and RTL for content)
-        applyTranslations('en');
+        // Hide brand input and show main viewer
+        if (brandInputContainer) brandInputContainer.style.display = 'none';
+        if (mainViewerContainer) mainViewerContainer.style.display = 'flex';
 
-        // --- Button Event Listeners for Main Viewer ---
-        if (resetButton) {
-            resetButton.addEventListener("click", () => {
-                modelViewer.cameraOrbit = "0deg 75deg auto"; 
-                modelViewer.fieldOfView = "45deg"; 
-                console.log("3D View Reset.");
-            });
+        console.log(`Loading model: ${currentSettings.model} for brand: ${brand}`);
+
+        // If a specific modelFileName is also provided, override the brand's model
+        if (modelFileName) {
+            console.log(`Overriding model with: ${modelFileName}`);
+            modelViewer.src = modelFileName;
         }
 
-        function generateQRCode() {
-            let urlToEncode = window.location.href;
-            if (brand && !modelFileName) { 
-                const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('brand', brand);
-                urlToEncode = currentUrl.toString();
-            }
-
-            if (urlToEncode && typeof QRious !== 'undefined' && qrCodeImage) {
-                try {
-                    new QRious({
-                        element: qrCodeImage, 
-                        value: urlToEncode,
-                        size: 150, 
-                        level: 'H' 
-                    });
-                    qrCodeImage.style.display = 'block';
-                    qrCodeLink.href = urlToEncode;
-                    console.log("QR Code generated for:", urlToEncode);
-                } catch (error) {
-                    console.error("Error generating QR code:", error);
-                    qrCodeImage.style.display = 'none';
-                }
-            } else {
-                console.warn("QRious library or QR code elements not found, or page URL is missing.");
-            }
-        }
-
-        if (arQrButton) {
-            arQrButton.addEventListener("click", () => {
-                generateQRCode(); 
-                qrModal.style.display = "flex"; 
-                console.log("AR / QR Code button clicked. Modal shown.");
-            });
-        }
-
-        if (closeQrModal) {
-            closeQrModal.addEventListener("click", () => {
-                qrModal.style.display = "none";
-                console.log("QR Modal closed.");
-            });
-        }
-
-        window.addEventListener("click", (event) => {
-            if (event.target == qrModal) {
-                qrModal.style.display = "none";
-                console.log("QR Modal closed by outside click.");
-            }
-        });
-
-        if (shareButton) {
-            shareButton.addEventListener("click", async () => {
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: document.title,
-                            url: window.location.href
-                        });
-                        console.log('Page shared successfully');
-                    } catch (error) {
-                        console.error('Error sharing the page:', error);
-                    }
-                } else {
-                    console.warn('Web Share API not supported. Providing fallback.');
-                    try {
-                        await navigator.clipboard.writeText(window.location.href);
-                        alert("Share feature not supported. The link has been copied to your clipboard!");
-                        console.log('Link copied to clipboard as fallback.');
-                    } catch (err) {
-                        alert("Share feature not supported. You can manually copy the link: " + window.location.href);
-                        console.error('Failed to copy link to clipboard:', err);
-                    }
-                }
-            });
-        }
-
-        if (hebrewButton) {
-            hebrewButton.addEventListener("click", () => {
-                currentLanguage = (currentLanguage === 'en') ? 'he' : 'en';
-                applyTranslations(currentLanguage);
-                console.log("Language toggled to: " + currentLanguage);
-            });
-        }
-
-    } else {
-        // If no brand is specified in URL, show the brand input page
+    } else { // If no brand is specified in URL, show the brand input page
         if (mainViewerContainer) mainViewerContainer.style.display = 'none';
         if (brandInputContainer) brandInputContainer.style.display = 'flex'; 
+        console.log("No brand parameter found. Displaying brand input.");
 
-        // Ensure brandErrorMessage is hidden initially on the landing page
-        if (brandErrorMessage) {
-            brandErrorMessage.style.display = 'none';
-        }
-
-        if (submitBrandButton && brandInput) {
+        // Attach event listeners for the brand input page
+        if (submitBrandButton) {
             submitBrandButton.addEventListener('click', () => {
-                const enteredBrand = brandInput.value.trim().toLowerCase();
-                
+                const enteredBrand = brandInput.value.toLowerCase().trim();
                 if (enteredBrand) {
                     if (brandSettings[enteredBrand]) {
-                        window.location.href = window.location.origin + window.location.pathname + '?brand=' + enteredBrand;
+                        // Redirect to the same page with the brand as a query parameter
+                        // This might be redundant if the parent iframe already passes via hash
+                        // but good for direct navigation to the viewer page itself.
+                        window.location.href = window.location.origin + window.location.pathname + '#brand=' + enteredBrand;
                     } else {
                         if (brandErrorMessage) {
                             brandErrorMessage.textContent = translations[currentLanguage].brandNotFound;
