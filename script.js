@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get brand from URL
     var brand = getUrlParameter('brand');
-    // ⭐ IMPORTANT FIX: Convert the brand from URL to lowercase here ⭐
+    // ⭐ IMPORTANT FIX (already added): Convert the brand from URL to lowercase here ⭐
     if (brand) {
         brand = brand.toLowerCase();
     }
@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Define brand specific settings
     var brandSettings = {
         'neryatech': {
-            model: 'Neryatech.glb',
+            // ⭐ CRITICAL FIX: Changed model to the working filename ⭐
+            model: 'neryatech_120mm_table_model.glb',
             dimensionsText: {
                 en: 'Dimensions: L 120mm x H 75mm x D 120mm',
                 he: 'מידות: אורך 120 מ"מ X גובה 75 מ"מ X עומק 120 מ"מ'
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
         },
-        // --- UPDATED: Brand Name Variations ---
+        // --- Brand Name Variations ---
         // NeryaTech Variations
         'nerya tech': null,
         'nerya': null,
@@ -126,10 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
         'tudoviewer': null,
         'tudo viewer': null,
         'tudodesigns': null
-        // Add more brands here in the future if needed
     };
 
-    // --- UPDATED: Map variations to their actual brand objects ---
+    // --- Map variations to their actual brand objects ---
     // This must be done AFTER brandSettings is fully defined
     brandSettings['nerya tech'] = brandSettings['neryatech'];
     brandSettings['nerya'] = brandSettings['neryatech'];
