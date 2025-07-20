@@ -77,16 +77,33 @@ document.addEventListener('DOMContentLoaded', function() {
         'neryatech ar': null,
         'neriatech': null,
         'nerytech': null,
-        'neryateck': null,   // Added
-        'neryatach': null,   // Added
-        'neryateh': null,    // Added
-        'nery': null,        // Added
-        'naryatech': null,   // Added
-        'neriatech ar': null, // Added
-        'neryatech ar viewer': null, // Added
-        'neryatech viewer': null, // Added
-        'nerya tech viewer': null, // Added
-        'nerya viewer': null, // Added
+        'neryateck': null,
+        'neryatach': null,
+        'neryateh': null,
+        'nery': null,
+        'naryatech': null,
+        'neriatech ar': null,
+        'neryatech ar viewer': null,
+        'neryatech viewer': null,
+        'nerya tech viewer': null,
+        'nerya viewer': null,
+        'neryatec ar': null,
+        'nerya technologies': null,
+        'neria technologies': null,
+        'neryatech solutions': null,
+        'neryatech studio': null,
+        'nerya tech studio': null,
+        'nerya solutions': null,
+        'nerya technology': null,
+        'neria': null, // Added
+        'neria ar': null, // Added
+        'neria viewer': null, // Added
+        'neria 3d': null, // Added
+        'neria model': null, // Added
+        'neriatech solutions': null, // Added (if distinct from neryatech solutions)
+        'neria design': null, // Added
+        'neria products': null, // Added
+
         // Tudo Variations
         'tu doo': null,
         'too doo': null,
@@ -95,16 +112,16 @@ document.addEventListener('DOMContentLoaded', function() {
         'tudodesign': null,
         'tudo design': null,
         'todo dasign': null,
-        'tuddo': null,       // Added
-        'tutto': null,       // Added
-        'tudos': null,       // Added
-        'tudu design': null, // Added
-        'todo design': null,  // Added
-        'tudoar': null,      // Added
-        'tudo ar': null,     // Added
-        'tudoviewer': null,  // Added
-        'tudo viewer': null, // Added
-        'tudodesigns': null  // Added
+        'tuddo': null,
+        'tutto': null,
+        'tudos': null,
+        'tudu design': null,
+        'todo design': null,
+        'tudoar': null,
+        'tudo ar': null,
+        'tudoviewer': null,
+        'tudo viewer': null,
+        'tudodesigns': null
         // Add more brands here in the future if needed
     };
 
@@ -128,6 +145,22 @@ document.addEventListener('DOMContentLoaded', function() {
     brandSettings['neryatech viewer'] = brandSettings['neryatech'];
     brandSettings['nerya tech viewer'] = brandSettings['neryatech'];
     brandSettings['nerya viewer'] = brandSettings['neryatech'];
+    brandSettings['neryatec ar'] = brandSettings['neryatech'];
+    brandSettings['nerya technologies'] = brandSettings['neryatech'];
+    brandSettings['neria technologies'] = brandSettings['neryatech'];
+    brandSettings['neryatech solutions'] = brandSettings['neryatech'];
+    brandSettings['neryatech studio'] = brandSettings['neryatech'];
+    brandSettings['nerya tech studio'] = brandSettings['neryatech'];
+    brandSettings['nerya solutions'] = brandSettings['neryatech'];
+    brandSettings['nerya technology'] = brandSettings['neryatech'];
+    brandSettings['neria'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria ar'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria viewer'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria 3d'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria model'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neriatech solutions'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria design'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria products'] = brandSettings['neryatech']; // Added mapping
 
 
     brandSettings['tu doo'] = brandSettings['tudo'];
