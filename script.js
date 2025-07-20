@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const qrModal = document.getElementById("qr-modal");       
     const closeQrModal = document.getElementById("close-qr-modal"); 
     const qrCodeLink = document.getElementById("qr-code-link");
-    const qrCodeImage = document.getElementById("qr-code-image");
+    const qrCodeImage = document = document.getElementById("qr-code-image");
     const qrModalTitle = document.querySelector('#qr-modal h2');
     const qrModalText = document.querySelector('#qr-modal p');
     const qrModalOpenLink = document.querySelector('#qr-modal a');
@@ -41,6 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get brand from URL
     var brand = getUrlParameter('brand');
+    // ⭐ IMPORTANT FIX: Convert the brand from URL to lowercase here ⭐
+    if (brand) {
+        brand = brand.toLowerCase();
+    }
     var modelFileName = getUrlParameter('model');
 
     // Define brand specific settings
@@ -95,14 +99,14 @@ document.addEventListener('DOMContentLoaded', function() {
         'nerya tech studio': null,
         'nerya solutions': null,
         'nerya technology': null,
-        'neria': null, // Added
-        'neria ar': null, // Added
-        'neria viewer': null, // Added
-        'neria 3d': null, // Added
-        'neria model': null, // Added
-        'neriatech solutions': null, // Added (if distinct from neryatech solutions)
-        'neria design': null, // Added
-        'neria products': null, // Added
+        'neria': null,
+        'neria ar': null,
+        'neria viewer': null,
+        'neria 3d': null,
+        'neria model': null,
+        'neriatech solutions': null,
+        'neria design': null,
+        'neria products': null,
 
         // Tudo Variations
         'tu doo': null,
@@ -153,14 +157,14 @@ document.addEventListener('DOMContentLoaded', function() {
     brandSettings['nerya tech studio'] = brandSettings['neryatech'];
     brandSettings['nerya solutions'] = brandSettings['neryatech'];
     brandSettings['nerya technology'] = brandSettings['neryatech'];
-    brandSettings['neria'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria ar'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria viewer'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria 3d'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria model'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neriatech solutions'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria design'] = brandSettings['neryatech']; // Added mapping
-    brandSettings['neria products'] = brandSettings['neryatech']; // Added mapping
+    brandSettings['neria'] = brandSettings['neryatech'];
+    brandSettings['neria ar'] = brandSettings['neryatech'];
+    brandSettings['neria viewer'] = brandSettings['neryatech'];
+    brandSettings['neria 3d'] = brandSettings['neryatech'];
+    brandSettings['neria model'] = brandSettings['neryatech'];
+    brandSettings['neriatech solutions'] = brandSettings['neryatech'];
+    brandSettings['neria design'] = brandSettings['neryatech'];
+    brandSettings['neria products'] = brandSettings['neryatech'];
 
 
     brandSettings['tu doo'] = brandSettings['tudo'];
@@ -309,7 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let urlToEncode = window.location.href;
             if (brand && !modelFileName) { 
                 const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('brand', brand);
+                // Ensure the brand parameter is correctly set in the URL for QR code generation
+                currentUrl.searchParams.set('brand', brand); 
                 urlToEncode = currentUrl.toString();
             }
 
