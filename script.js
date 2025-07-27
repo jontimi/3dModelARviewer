@@ -235,6 +235,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Apply initial English translation (this will also set dimensions and RTL for content)
         applyTranslations('en');
 
+        // --- AR Scaling Fix: Add the event listener here ---
+        // This will ensure the ar-scale attribute is set to "fixed" as soon as the model loads.
+        modelViewer.addEventListener('load', () => {
+            if (modelViewer.ar) {
+                modelViewer.setAttribute('ar-scale', 'fixed');
+                console.log('AR scaling set to fixed on model load.');
+            }
+        });
+
         // --- Button Event Listeners for Main Viewer ---
         if (resetButton) {
             resetButton.addEventListener("click", () => {
