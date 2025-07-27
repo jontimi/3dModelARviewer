@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Define brand specific settings
     var brandSettings = {
         'neryatech': {
-            logo: null, // This brand doesn't use the logo header
+            logo: 'nerya-logo.png', // Logo file for NeryaTech
             model: 'neryatech_120mm_table_model.glb',
             dimensionsText: {
                 en: 'Dimensions: L 120mm x H 75mm x D 120mm',
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonHoverColor: '#0056b3'
         },
         'tudo': {
-            logo: null, // This brand doesn't use the logo header
+            logo: 'tudo-logo.png', // Logo file for Tudo Design
             model: 'HiveShelf90cm.glb',
             dimensionsText: {
                 en: 'Dimensions: W 90cm x H 160cm x D 20cm',
