@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Define brand specific settings
     var brandSettings = {
         'neryatech': {
-            logo: 'nerya-logo.png', // Logo file for NeryaTech
+            logo: 'nerya-logo.png',
+            website: 'https://neryatech.co.il/product/%d7%a9%d7%95%d7%9c%d7%97%d7%9f-%d7%99%d7%a9%d7%99%d7%91%d7%95%d7%aa-%d7%9e%d7%93%d7%95%d7%a8%d7%94-%d7%a7%d7%95%d7%98%d7%a8-120-%d7%a1%d7%9e/',
             model: 'neryatech_120mm_table_model.glb',
             dimensionsText: {
                 en: 'Dimensions: L 120mm x H 75mm x D 120mm',
@@ -63,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonHoverColor: '#0056b3'
         },
         'tudo': {
-            logo: 'tudo-logo.png', // Logo file for Tudo Design
+            logo: 'tudo-logo.png',
+            website: 'https://www.tudo.co.il/product/%D7%A1%D7%A4%D7%A8%D7%99%D7%94-%D7%9B%D7%95%D7%95%D7%A8%D7%AA-%D7%96%D7%99%D7%92%D7%96%D7%92-%D7%91%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%9E%D7%95%D7%93%D7%A8%D7%A0%D7%99-%D7%98%D7%95%D7%93%D7%95-%D7%93%D7%99%D7%96%D7%99%D7%99%D7%9F-%D7%93%D7%92%D7%9d-%D7%95%D7%A8%D7%93-0',
             model: 'HiveShelf90cm.glb',
             dimensionsText: {
                 en: 'Dimensions: W 90cm x H 160cm x D 20cm',
@@ -75,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
         },
-        // --- Added new brand: Shimrat Hazorea ---
         'shimrat': {
             logo: 'SHWlogo.webp',
+            website: 'https://www.shw.co.il/bookcase-tzof',
             model: 'bookcase-tzof.glb',
             dimensionsText: {
                 en: 'Dimensions: H 180cm x W 200cm x D 30cm',
@@ -105,12 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
     brandSettings['nerya tech'] = brandSettings['neryatech'];
     brandSettings['nerya'] = brandSettings['neryatech'];
     brandSettings['neria tech'] = brandSettings['neryatech'];
-    // ... (All other variations from your code, kept for consistency)
     brandSettings['tu doo'] = brandSettings['tudo'];
     brandSettings['todo'] = brandSettings['tudo'];
-    // ... (All other variations from your code, kept for consistency)
-
-    // --- Added variations for Shimrat Hazorea ---
     brandSettings['שמרת הזורע'] = brandSettings['shimrat'];
     brandSettings['shw'] = brandSettings['shimrat'];
     brandSettings['shimrat hazorea'] = brandSettings['shimrat'];
@@ -215,6 +213,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Apply dynamic branding (logo, colors)
         if (currentSettings.logo) {
             brandLogo.src = currentSettings.logo;
+            // Check if there's a website and create a link
+            if (currentSettings.website) {
+                const logoLink = document.createElement('a');
+                logoLink.href = currentSettings.website;
+                logoLink.target = "_blank"; // Open in new tab
+                brandHeader.appendChild(logoLink);
+                logoLink.appendChild(brandLogo);
+            }
             brandHeader.style.display = 'block';
         } else {
             brandHeader.style.display = 'none';
