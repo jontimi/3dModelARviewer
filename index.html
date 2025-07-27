@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +20,22 @@
             color: #333333;
             text-align: center;
         }
+
+        /* מיתוג עליון */
+        .brand-header {
+            padding: 10px;
+            background-color: var(--header-bg-color, #232020);
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .logo {
+            height: 40px;
+        }
         
         /* Main Viewer Container - shown when brand is specified */
         .main-viewer-container {
@@ -30,6 +46,7 @@
             justify-content: flex-start;
             padding: 20px;
             box-sizing: border-box;
+            padding-top: 70px;
         }
 
         .main-viewer-container h1 {
@@ -252,6 +269,7 @@
         @media (max-width: 768px) {
             .main-viewer-container {
                 padding: 10px;
+                padding-top: 70px;
             }
             .product-3d-viewer-container {
                 height: 45vh;
@@ -283,7 +301,11 @@
     </style>
 </head>
 <body>
-    <div id="brandInputContainer" class="brand-input-container" style="display: none;">
+    <header class="brand-header" id="brand-header" style="display: none;">
+        <img id="brand-logo" src="" alt="Brand Logo" class="logo">
+    </header>
+
+    <div id="brandInputContainer" class="brand-input-container">
         <model-viewer id="brandLogo3D"
                       src="models/JZS-3D-LOGOBLACK.glb" alt="JZS3D 3D Logo"
                       camera-controls="false"
@@ -312,8 +334,8 @@
     </div>
 
     <div id="mainViewerContainer" class="main-viewer-container" style="display: none;">
-        <h1>Simple 3D AR Model Viewer Template</h1>
-        <p>This page demonstrates a single, embeddable 3D AR model viewer. This shows how the pop up 3D view window will look and function.</p>
+        <h1 id="mainTitle"></h1>
+        <p id="subText"></p>
         <div id="dimensionsText" class="dimensions-text"></div>
 
         <div class="product-3d-viewer-container">
@@ -338,21 +360,21 @@
             <button id="hebrew-button" class="action-button">עברית</button>
         </div>
 
-        <div class="footer-text">Made by <a href="https://jzs3d.framer.ai/" target="_blank" style="color: #777; text-decoration: none;">JZS3D</a> | 3D & AR Product Integration</div>
+        <div class="footer-text" id="footer-text">Made by <a href="https://jzs3d.framer.ai/" target="_blank" style="color: #777; text-decoration: none;">JZS3D</a> | 3D & AR Product Integration</div>
     </div>
 
     <div id="qr-modal" class="modal">
         <div class="modal-content">
             <span class="close-button-modal" id="close-qr-modal">&times;</span>
-            <h2>Scan for AR or Share</h2>
+            <h2 id="qr-modal-title">Scan for AR or Share</h2>
             <div class="qr-code-wrapper">
                 <img id="qr-code-image" alt="QR Code">
                 <a id="qr-code-link" href="#" target="_blank">Open Link</a>
             </div>
-            <p>Scan the QR code with your phone to view in AR or share the link.</p>
+            <p id="qr-modal-text">Scan the QR code with your phone to view in AR or share the link.</p>
         </div>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
