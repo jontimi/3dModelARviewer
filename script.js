@@ -57,22 +57,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 en: 'Dimensions: L 120mm x H 75mm x D 120mm',
                 he: 'מידות: אורך 120 מ"מ X גובה 75 מ"מ X עומק 120 מ"מ'
             },
-            viewerBgColor: '#ADD8E6',
-            headerBgColor: 'transparent',
+            viewerBgColor: '#ffffff',
+            headerBgColor: '#ffffff', // Changed to white
             modelViewerAreaBg: '#f5f5f5',
-            buttonBgColor: '#007bff',
-            buttonHoverColor: '#0056b3'
+            buttonBgColor: '#1877F2',
+            buttonHoverColor: '#1462c4'
         },
         'tudo': {
             logo: 'tudo-logo.png',
-            website: 'https://www.tudo.co.il/product/%D7%A1%D7%A4%D7%A8%D7%99%D7%94-%D7%9B%D7%95%D7%95%D7%A8%D7%AA-%D7%96%D7%99%D7%92%D7%96%D7%92-%D7%91%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%9E%D7%95%D7%93%D7%A8%D7%A0%D7%99-%D7%98%D7%95%D7%93%D7%95-%D7%93%D7%99%D7%96%D7%99%D7%99%D7%9F-%D7%93%D7%92%D7%9D-%D7%95%D7%A8%D7%93-0',
+            website: 'https://www.tudo.co.il/',
             model: 'HiveShelf90cm.glb',
             dimensionsText: {
                 en: 'Dimensions: W 90cm x H 160cm x D 20cm',
                 he: 'מידות: רוחב 90 ס"מ X גובה 160 ס"מ X עומק 20 ס"מ'
             },
             viewerBgColor: '#f0f0f0',
-            headerBgColor: 'transparent',
+            headerBgColor: '#ffffff', // Changed to white
             modelViewerAreaBg: '#ffffff',
             buttonBgColor: '#4CAF50',
             buttonHoverColor: '#45a049'
