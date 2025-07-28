@@ -82,8 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
             website: 'https://www.shw.co.il/bookcase-tzof',
             model: 'bookcase-tzof.glb',
             dimensionsText: {
-                en: 'Dimensions: H 180cm x W 200cm x D 30cm',
-                he: 'מידות: 180 ס״מ (גובה) x 200 ס״מ (רוחב) x 30 ס״מ (עומק)'
+                en: 'Dimensions: W 85cm x H 163cm x D 35cm',
+                he: 'מידות: רוחב 85 ס"מ x גובה 163 ס"מ x עומק 35 ס"מ'
             },
             viewerBgColor: '#f0f0f0',
             headerBgColor: '#232020',
